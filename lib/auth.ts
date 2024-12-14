@@ -1,8 +1,8 @@
-import { getTokens } from "next-firebase-auth-edge";
-import { cookies } from "next/headers";
-import { clientConfig, serverConfig } from "./config";
+import { getTokens } from 'next-firebase-auth-edge';
+import { cookies } from 'next/headers';
+import { clientConfig, serverConfig } from './config';
 
-export async function isAuthenticated() {
+async function isUserAuth() {
   const tokens = await getTokens(await cookies(), {
     apiKey: clientConfig.apiKey,
     cookieName: serverConfig.cookieName,
@@ -12,3 +12,16 @@ export async function isAuthenticated() {
 
   return tokens && tokens.decodedToken.email;
 }
+
+async function getUser() {
+  const tokens = await getTokens(await cookies(), {
+    apiKey: clientConfig.apiKey,
+    cookieName: serverConfig.cookieName,
+    cookieSignatureKeys: serverConfig.cookieSignatureKeys,
+    serviceAccount: serverConfig.serviceAccount,
+  });
+
+  return tokens?.decodedToken;
+}
+
+export { isUserAuth, getUser };

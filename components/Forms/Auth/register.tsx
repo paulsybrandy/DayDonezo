@@ -1,28 +1,29 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   createUserWithEmailAndPassword,
   getAuth,
   GithubAuthProvider,
   GoogleAuthProvider,
   signInWithPopup,
+  updateProfile,
   UserCredential,
-} from "firebase/auth";
-import { app } from "@/lib/firebase";
-import { Button } from "@/components/ui/button";
+} from 'firebase/auth';
+import { app } from '@/lib/firebase';
+import { Button } from '@/components/ui/button';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 
-import { z } from "zod";
+import { z } from 'zod';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 
 import {
   Form,
@@ -31,26 +32,27 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import Image from "next/image";
-import { useMutation } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import Image from 'next/image';
+import { useMutation } from '@tanstack/react-query';
+import { Loader2 } from 'lucide-react';
 
 const registerFormSchema = z
   .object({
+    username: z.string().min(3),
     email: z.string().email(),
     password: z.string().min(8),
     cpassword: z.string().min(8),
   })
   .refine((data) => data.password === data.cpassword, {
-    message: "Passwords do not match",
-    path: ["cpassword"],
+    message: 'Passwords do not match',
+    path: ['cpassword'],
   });
 
 export default function RegisterForm() {
   const googleProvider = new GoogleAuthProvider();
-  googleProvider.setCustomParameters({ prompt: "select_account" });
+  googleProvider.setCustomParameters({ prompt: 'select_account' });
 
   const githubProvider = new GithubAuthProvider();
 
@@ -59,13 +61,13 @@ export default function RegisterForm() {
   const registerForm = useForm<z.infer<typeof registerFormSchema>>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
   const registerMutation = useMutation({
-    mutationKey: ["user-signup"],
+    mutationKey: ['user-signup'],
     mutationFn: async ({
       values,
       type,
@@ -80,21 +82,23 @@ export default function RegisterForm() {
           values!.email,
           values!.password
         );
+        await updateProfile(credentials.user, {
+          displayName: values?.username,
+        });
       } else if (type === 1) {
         credentials = await signInWithPopup(getAuth(app), googleProvider);
       } else if (type === 2) {
         credentials = await signInWithPopup(getAuth(app), githubProvider);
       }
-
       const idToken = await credentials!.user.getIdToken();
 
-      await fetch("/api/login", {
+      await fetch('/api/login', {
         headers: {
           Authorization: `Bearer ${idToken}`,
         },
       });
 
-      router.push("/dashboard");
+      router.refresh();
     },
   });
 
@@ -111,7 +115,7 @@ export default function RegisterForm() {
     <section className="flex flex-1 flex-col items-center justify-center p-8">
       <Card>
         <CardHeader>
-          <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+          <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-2xl">
             Create an Account
           </h1>
           {registerMutation.error && (
@@ -126,6 +130,19 @@ export default function RegisterForm() {
               onSubmit={registerForm.handleSubmit(onSubmit)}
               className="space-y-4"
             >
+              <FormField
+                control={registerForm.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input placeholder="example123" {...field} type="text" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={registerForm.control}
                 name="email"
@@ -179,7 +196,7 @@ export default function RegisterForm() {
               />
               <Button
                 type="submit"
-                className="w-full text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-800"
+                className="dark:focus:ring-primary-800 w-full rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white"
                 disabled={registerMutation.isPending}
               >
                 {registerMutation.isPending ? (
@@ -189,15 +206,15 @@ export default function RegisterForm() {
                 )}
               </Button>
             </form>
-          </Form>{" "}
+          </Form>{' '}
           <div className="flex items-center gap-8">
             <hr className="flex-1" />
             <span>or</span>
             <hr className="flex-1" />
           </div>
           <Button
-            variant={"outline"}
-            className="w-full hover:text-none"
+            variant={'outline'}
+            className="hover:text-none w-full"
             onClick={() => signInWithProvider(1)}
           >
             <Image
@@ -209,7 +226,7 @@ export default function RegisterForm() {
             Sign In with Google
           </Button>
           <Button
-            variant={"link"}
+            variant={'link'}
             className="w-full bg-black text-white hover:no-underline"
             onClick={() => signInWithProvider(2)}
           >
@@ -222,7 +239,7 @@ export default function RegisterForm() {
             Sign In with GitHub
           </Button>
           <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-            Already have an account?{" "}
+            Already have an account?{' '}
             <Link
               href="/login"
               className="font-medium text-gray-600 hover:underline dark:text-gray-500"

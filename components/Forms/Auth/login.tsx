@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   getAuth,
   GithubAuthProvider,
@@ -9,20 +9,20 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   UserCredential,
-} from "firebase/auth";
-import { app } from "@/lib/firebase";
-import { Button } from "@/components/ui/button";
+} from 'firebase/auth';
+import { app } from '@/lib/firebase';
+import { Button } from '@/components/ui/button';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 
-import { z } from "zod";
+import { z } from 'zod';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 
 import {
   Form,
@@ -31,11 +31,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import Image from "next/image";
-import { useMutation } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import Image from 'next/image';
+import { useMutation } from '@tanstack/react-query';
+import { Loader2 } from 'lucide-react';
 
 const loginFormSchema = z.object({
   email: z.string().email(),
@@ -44,7 +44,7 @@ const loginFormSchema = z.object({
 
 export default function LoginForm() {
   const googleProvider = new GoogleAuthProvider();
-  googleProvider.setCustomParameters({ prompt: "select_account" });
+  googleProvider.setCustomParameters({ prompt: 'select_account' });
 
   const githubProvider = new GithubAuthProvider();
 
@@ -53,13 +53,13 @@ export default function LoginForm() {
   const loginForm = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
   const loginMutation = useMutation({
-    mutationKey: ["user-signin"],
+    mutationKey: ['user-signin'],
     mutationFn: async ({
       values,
       type,
@@ -82,13 +82,13 @@ export default function LoginForm() {
 
       const idToken = await credentials!.user.getIdToken();
 
-      await fetch("/api/login", {
+      await fetch('/api/login', {
         headers: {
           Authorization: `Bearer ${idToken}`,
         },
       });
 
-      router.push("/dashboard");
+      router.refresh();
     },
   });
 
@@ -104,7 +104,7 @@ export default function LoginForm() {
     <section className="flex flex-1 flex-col items-center justify-center p-8">
       <Card>
         <CardHeader>
-          <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+          <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-2xl">
             Login to DayDonezo
           </h1>
           {loginMutation.error && (
@@ -155,7 +155,7 @@ export default function LoginForm() {
               />
               <Button
                 type="submit"
-                className="w-full text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-800"
+                className="dark:focus:ring-primary-800 w-full rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white"
                 disabled={loginMutation.isPending}
               >
                 {loginMutation.isPending ? (
@@ -165,14 +165,14 @@ export default function LoginForm() {
                 )}
               </Button>
             </form>
-          </Form>{" "}
+          </Form>{' '}
           <div className="flex items-center gap-8">
             <hr className="flex-1" />
             <span>or</span>
             <hr className="flex-1" />
           </div>
           <Button
-            variant={"outline"}
+            variant={'outline'}
             className="w-full"
             onClick={() => signInWithProvider(1)}
           >
@@ -185,8 +185,8 @@ export default function LoginForm() {
             Sign In with Google
           </Button>
           <Button
-            variant={"link"}
-            className="w-full hover:no-underline bg-black text-white"
+            variant={'link'}
+            className="w-full bg-black text-white hover:no-underline"
             onClick={() => signInWithProvider(2)}
           >
             <Image
@@ -198,7 +198,7 @@ export default function LoginForm() {
             Sign In with GitHub
           </Button>
           <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-            Don&apos;t have an account?{" "}
+            Don&apos;t have an account?{' '}
             <Link
               href="/register"
               className="font-medium text-gray-600 hover:underline dark:text-gray-500"
