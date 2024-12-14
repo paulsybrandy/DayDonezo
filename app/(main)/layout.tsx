@@ -5,7 +5,7 @@ import Header from "@/components/Layout/header";
 import { Const } from "@/lib/contants";
 import Footer from "@/components/Layout/footer";
 import { Toaster } from "sonner";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Providers from "../_providers/query-provider";
 
 const geistMono = Rubik({
   variable: "--font-sans",
@@ -17,8 +17,6 @@ export const metadata: Metadata = {
   title: Const.APP_NAME,
   description: Const.APP_DESCRIPTION,
 };
-
-const queryClient = new QueryClient();
 
 export default function RootLayout({
   children,
@@ -32,9 +30,7 @@ export default function RootLayout({
       >
         <main className="flex flex-col min-h-screen">
           <Header />
-          <QueryClientProvider client={queryClient}>
-            {children}
-          </QueryClientProvider>
+          <Providers>{children}</Providers>
           <Footer />
           <Toaster />
         </main>

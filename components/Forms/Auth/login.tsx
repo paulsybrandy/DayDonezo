@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -35,6 +34,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
+import { useMutation } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
 const loginFormSchema = z.object({
   email: z.string().email(),
@@ -47,7 +48,6 @@ export default function LoginForm() {
 
   const githubProvider = new GithubAuthProvider();
 
-  const [error, setError] = useState("");
   const router = useRouter();
 
   const loginForm = useForm<z.infer<typeof loginFormSchema>>({
@@ -58,37 +58,28 @@ export default function LoginForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof loginFormSchema>) {
-    setError("");
-
-    try {
-      const credential = await signInWithEmailAndPassword(
-        getAuth(app),
-        values.email,
-        values.password
-      );
-      const idToken = await credential.user.getIdToken();
-
-      await fetch("/api/login", {
-        headers: {
-          Authorization: `Bearer ${idToken}`,
-        },
-      });
-
-      router.push("/");
-    } catch (e) {
-      setError((e as Error).message);
-    }
-  }
-
-  async function signInWithProvider(type: number) {
-    try {
+  const loginMutation = useMutation({
+    mutationKey: ["user-signin"],
+    mutationFn: async ({
+      values,
+      type,
+    }: {
+      values?: z.infer<typeof loginFormSchema>;
+      type: number;
+    }) => {
       let credentials: UserCredential;
       if (type === 0) {
-        credentials = await signInWithPopup(getAuth(app), googleProvider);
+        credentials = await signInWithEmailAndPassword(
+          getAuth(app),
+          values!.email,
+          values!.password
+        );
       } else if (type === 1) {
+        credentials = await signInWithPopup(getAuth(app), googleProvider);
+      } else if (type === 2) {
         credentials = await signInWithPopup(getAuth(app), githubProvider);
       }
+
       const idToken = await credentials!.user.getIdToken();
 
       await fetch("/api/login", {
@@ -97,10 +88,16 @@ export default function LoginForm() {
         },
       });
 
-      router.push("/");
-    } catch (e) {
-      setError((e as Error).message);
-    }
+      router.push("/dashboard");
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof loginFormSchema>) {
+    await loginMutation.mutate({ values, type: 0 });
+  }
+
+  async function signInWithProvider(type: number) {
+    await loginMutation.mutate({ type });
   }
 
   return (
@@ -110,8 +107,10 @@ export default function LoginForm() {
           <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
             Login to DayDonezo
           </h1>
-          {error && (
-            <CardDescription className="text-red-500">{error}</CardDescription>
+          {loginMutation.error && (
+            <CardDescription className="text-red-500">
+              {loginMutation.error.message}
+            </CardDescription>
           )}
         </CardHeader>
         <CardContent className="space-y-3">
@@ -157,8 +156,13 @@ export default function LoginForm() {
               <Button
                 type="submit"
                 className="w-full text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-800"
+                disabled={loginMutation.isPending}
               >
-                Submit
+                {loginMutation.isPending ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <span>Continue</span>
+                )}
               </Button>
             </form>
           </Form>{" "}
@@ -170,7 +174,7 @@ export default function LoginForm() {
           <Button
             variant={"outline"}
             className="w-full"
-            onClick={() => signInWithPopup(getAuth(app), googleProvider)}
+            onClick={() => signInWithProvider(1)}
           >
             <Image
               src="/svgs/google-logo.svg"
@@ -183,7 +187,7 @@ export default function LoginForm() {
           <Button
             variant={"link"}
             className="w-full hover:no-underline bg-black text-white"
-            onClick={() => signInWithProvider(1)}
+            onClick={() => signInWithProvider(2)}
           >
             <Image
               src="/svgs/github-logo.svg"
