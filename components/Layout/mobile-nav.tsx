@@ -27,7 +27,7 @@ export default function MobileNavComponent() {
   const { user } = useAuth();
 
   return (
-    <section className="fixed bottom-0 z-10 mx-auto block w-full border-t bg-white py-1 lg:hidden">
+    <section className="sticky bottom-0 order-2 mx-auto block w-full border-t bg-white py-1 lg:hidden">
       <div className="flex gap-4 *:flex-1 *:place-items-center *:py-2">
         {menuItems.map((item, i) => (
           <Link href={item.url} key={i}>

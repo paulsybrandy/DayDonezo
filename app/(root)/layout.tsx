@@ -6,7 +6,6 @@ import { Const } from '@/lib/contants';
 import Footer from '@/components/Layout/footer';
 import { Toaster } from 'sonner';
 import Providers from '../_providers/provider';
-import MobileNavComponent from '@/components/Layout/mobile-nav';
 
 const geistMono = Rubik({
   variable: '--font-sans',
@@ -34,7 +33,6 @@ export default function RootLayout({
             <Header />
             {children}
             <Footer />
-            <MobileNavComponent />
             <Toaster />
           </Providers>
         </main>
