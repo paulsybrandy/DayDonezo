@@ -10,7 +10,7 @@ export default function RootLayout({
 }>) {
   return (
     <>
-      <SidebarProvider className="flex-1 flex-col lg:flex-row">
+      <SidebarProvider className="flex-1 flex-col pb-12 lg:flex-row">
         <AppSidebar />
         {children}
         <MobileNavComponent />

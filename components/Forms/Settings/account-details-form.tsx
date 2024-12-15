@@ -24,12 +24,12 @@ const formSchema = z.object({
 
 export default function AccountDetailsForm() {
   const { user } = useAuth();
-  console.log(user);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     values: {
-      username: user!.displayName!,
-      email: user!.email!,
+      username: user ? user.displayName! : '',
+      email: user ? user.email! : '',
     },
   });
 

@@ -108,7 +108,6 @@ export default function RegisterForm() {
 
   async function signInWithProvider(type: number) {
     await registerMutation.mutate({ type });
-    console.log(registerMutation.isPending);
   }
 
   return (
