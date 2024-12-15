@@ -38,7 +38,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${parsedFont === 'rubik' ? rubik.variable : montserrat.variable} min-h-svh bg-background font-sans antialiased`}
+        className={`${parsedFont === 'montserrat' ? montserrat.variable : rubik.variable} min-h-svh bg-background font-sans antialiased`}
       >
         <main className="flex h-screen min-h-svh flex-col overflow-y-auto">
           <Providers>
