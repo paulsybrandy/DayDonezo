@@ -6,7 +6,6 @@ import { Const } from '@/lib/contants';
 import Footer from '@/components/Layout/footer';
 import { Toaster } from 'sonner';
 import Providers from '../_providers/provider';
-import Cookies from 'js-cookie';
 import { cookies } from 'next/headers';
 
 const rubik = Rubik({
