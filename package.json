@@ -60,8 +60,5 @@
     "prisma": "^6.0.1",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
-  },
-  "overrides": {
-    "react-is": "^19.0.0-rc-69d4b800-20241021"
   }
 }
