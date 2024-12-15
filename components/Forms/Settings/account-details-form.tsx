@@ -28,8 +28,8 @@ export default function AccountDetailsForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     values: {
-      username: user?.displayName,
-      email: user?.email,
+      username: user!.displayName!,
+      email: user!.email!,
     },
   });
 
