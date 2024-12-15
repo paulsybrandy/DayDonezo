@@ -20,6 +20,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  if (path === '/' && isAuth) {
+    url.pathname = '/dashboard'; // Redirect to login if not logged in
+    return NextResponse.redirect(url);
+  }
+
   // Default authentication logic
   return authMiddleware(request, {
     loginPath: '/api/login',

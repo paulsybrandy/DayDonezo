@@ -12,7 +12,7 @@ export default function Footer() {
       <footer
         className={cn(
           'border border-t py-2 text-center',
-          location === '/' ? 'block' : 'hidden lg:block'
+          location === '/' ? 'block' : 'hidden'
         )}
       >
         Made with ❤️ by{' '}
