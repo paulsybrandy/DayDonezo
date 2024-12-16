@@ -1,6 +1,6 @@
 'use client';
 
-import { CardContent, CardFooter } from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
 import React from 'react';
 
 import { useForm } from 'react-hook-form';
@@ -21,7 +21,6 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
@@ -30,7 +29,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Check, ChevronsUpDown, Save } from 'lucide-react';
+import { Check, ChevronsUpDown } from 'lucide-react';
 import { Montserrat, Rubik } from 'next/font/google';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
