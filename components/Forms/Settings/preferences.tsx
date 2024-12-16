@@ -73,7 +73,7 @@ export default function Preferences() {
     values: {
       font: Cookies.get('user.preferences')
         ? JSON.parse(Cookies.get('user.preferences')!).font!
-        : '',
+        : 'rubik',
     },
   });
 
@@ -86,11 +86,7 @@ export default function Preferences() {
     <div>
       <CardContent className="my-0 mb-4 p-6 py-0">
         <Form {...form}>
-          <form
-            id="preferences-form"
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8"
-          >
+          <form id="preferences-form" className="space-y-8">
             <FormField
               control={form.control}
               name="font"
@@ -123,7 +119,7 @@ export default function Preferences() {
                     </PopoverTrigger>
                     <PopoverContent className="w-[200px] p-0">
                       <Command>
-                        <CommandInput placeholder="Search language..." />
+                        {/* <CommandInput placeholder="Search language..." /> */}
                         <CommandList>
                           <CommandEmpty>No language found.</CommandEmpty>
                           <CommandGroup>
@@ -134,6 +130,7 @@ export default function Preferences() {
                                 onSelect={() => {
                                   form.setValue('font', fonts.value);
                                   setOpen(false);
+                                  onSubmit(form.getValues());
                                 }}
                                 className={`font-sans ${fonts.font.variable}`}
                               >
@@ -163,12 +160,6 @@ export default function Preferences() {
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="my-0">
-        <Button type="submit" form="preferences-form">
-          <Save />
-          Save
-        </Button>
-      </CardFooter>
     </div>
   );
 }
