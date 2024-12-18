@@ -31,7 +31,7 @@ const moodEmojis: { [key: string]: string } = {
   productive: '⚡',
 };
 
-const mockEntries = [
+export const mockEntries = [
   {
     id: 1,
     date: '2024-12-15',
@@ -105,34 +105,74 @@ const mockEntries = [
   },
 ];
 
+export const tagColors: Record<string, string> = {
+  database: 'yellow',
+  optimization: 'blue',
+  analytics: 'cyan',
+  dashboard: 'gray',
+  teamwork: 'red',
+  codereview: 'yellow',
+  darkmode: 'blue',
+  ui: 'cyan',
+  refactoring: 'gray',
+  performance: 'red',
+  learning: 'yellow',
+  websockets: 'blue',
+  bugfix: 'cyan',
+  meeting: 'gray',
+  planning: 'red',
+  css: 'red',
+  frontend: 'red',
+  coding: 'red',
+  auth: 'red',
+};
+
 export default function JournalComponent() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [selectedEntry, setSelectedEntry] = useState<(typeof mockEntries)[0]>();
 
   const formatDay: DateFormatter = (day) => {
     const dateGregorian = dayjs(day).format('D');
 
     return (
       <div>
-        <span className="text-sm">{dateGregorian}</span>
         {mockEntries
           .map((item) => dayjs(item.date).format('DD/MM/YYYY'))
-          .includes(dayjs(day).format('DD/MM/YYYY')) && (
-          <span className="block text-[0.7rem] leading-3 text-green-400">
-            <Check />
+          .includes(dayjs(day).format('DD/MM/YYYY')) ? (
+          <p
+            className={cn(
+              dayjs(date).format('DD/MM/YYYY') ===
+                dayjs(day).format('DD/MM/YYYY')
+                ? 'text-white'
+                : 'text-green-500'
+            )}
+          >
+            <span className="text-sm">{dateGregorian}</span>
+            <span className="block text-[0.2rem] leading-3">
+              <Check size={10} />
+            </span>
+          </p>
+        ) : (
+          <span
+            className={cn(
+              'text-sm',
+              dayjs(date).format('DD/MM/YYYY') ===
+                dayjs(day).format('DD/MM/YYYY')
+                ? 'text-white'
+                : 'text-red-500'
+            )}
+          >
+            {dateGregorian}
           </span>
         )}
       </div>
     );
   };
 
-  const [selectedEntry, setSelectedEntry] = useState<(typeof mockEntries)[0]>();
-  console.log(
-    dayjs(new Date()).format('DD/MM/YYYY') === dayjs(date).format('DD/MM/YYYY')
-  );
   return (
     <section className="w-auto flex-1 space-y-4 overflow-auto p-4 py-4 lg:px-16">
       <div className="mx-auto justify-items-center space-y-6">
-        <Card className="inline-block w-full max-w-3xl">
+        <Card className="inline-block w-full max-w-4xl">
           <CardHeader>
             <CardTitle>Journal Entries</CardTitle>
           </CardHeader>
@@ -205,7 +245,11 @@ export default function JournalComponent() {
                         {selectedEntry.mood}
                       </Badge>
                       {selectedEntry.tags.map((tag) => (
-                        <Badge key={tag} variant="default">
+                        <Badge
+                          key={tag}
+                          variant="default"
+                          className={`bg-${tagColors[tag] || 'gray'}-500 hover:bg-${tagColors[tag]}-600`}
+                        >
                           <Tag className="mr-1 h-4 w-4" />
                           {tag}
                         </Badge>
@@ -242,7 +286,7 @@ export default function JournalComponent() {
             <CardTitle>Entries</CardTitle>
           </CardHeader>
           <CardContent>
-            <DataTableDemo />
+            <DataTableDemo mockEntries={mockEntries} />
           </CardContent>
         </Card>
       </div>
