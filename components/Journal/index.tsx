@@ -244,16 +244,24 @@ export default function JournalComponent() {
                         Mood: {moodEmojis[selectedEntry.mood]}{' '}
                         {selectedEntry.mood}
                       </Badge>
-                      {selectedEntry.tags.map((tag) => (
-                        <Badge
-                          key={tag}
-                          variant="default"
-                          className={`bg-${tagColors[tag] || 'gray'}-500 hover:bg-${tagColors[tag]}-600`}
-                        >
-                          <Tag className="mr-1 h-4 w-4" />
-                          {tag}
-                        </Badge>
-                      ))}
+                      {selectedEntry.tags.map((tag) => {
+                        const bgColor = tagColors[tag]
+                          ? `bg-${tagColors[tag]}-500`
+                          : 'bg-gray-500';
+                        const hoverColor = tagColors[tag]
+                          ? `hover:bg-${tagColors[tag]}-600`
+                          : 'hover:bg-gray-600';
+                        return (
+                          <Badge
+                            key={tag}
+                            variant="default"
+                            className={`${bgColor} ${hoverColor}`}
+                          >
+                            <Tag className="mr-1 h-4 w-4" />
+                            {tag}
+                          </Badge>
+                        );
+                      })}
                     </div>
                   </CardDescription>
                 )}
