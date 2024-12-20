@@ -82,7 +82,7 @@ export function TagCreator() {
                   onClick={() => createTag(value)}
                 >
                   <Plus className="mr-2 h-4 w-4" />
-                  Create "{value}"
+                  Create &quot;{value}&quot;
                 </Button>
               </CommandEmpty>
               <CommandGroup heading="Existing Tags">
