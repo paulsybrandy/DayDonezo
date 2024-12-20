@@ -245,12 +245,10 @@ export default function JournalComponent() {
                         {selectedEntry.mood}
                       </Badge>
                       {selectedEntry.tags.map((tag) => {
-                        const bgColor = tagColors[tag]
-                          ? `bg-${tagColors[tag]}-500`
-                          : 'bg-gray-500';
-                        const hoverColor = tagColors[tag]
-                          ? `hover:bg-${tagColors[tag]}-600`
-                          : 'hover:bg-gray-600';
+                        const bgColor =
+                          tagColors[tag] ?? `bg-${tagColors[tag]}-500`;
+                        const hoverColor =
+                          tagColors[tag] ?? `hover:bg-${tagColors[tag]}-600`;
                         return (
                           <Badge
                             key={tag}

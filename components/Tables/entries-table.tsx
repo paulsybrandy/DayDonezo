@@ -166,7 +166,7 @@ export const columns: ColumnDef<Entries>[] = [
           {row.original.tags.map((tag) => (
             <Badge
               key={tag}
-              variant="default"
+              variant="outline"
               className={`bg-${tagColors[tag] || 'gray'}-500 hover:bg-${tagColors[tag]}-600`}
             >
               <Tag className="mr-1 h-4 w-4" />
