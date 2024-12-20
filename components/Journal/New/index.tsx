@@ -3,7 +3,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import EditorJS from '@editorjs/editorjs';
-import CheckList from '@editorjs/checklist';
 import Quote from '@editorjs/quote';
 import Paragraph from '@editorjs/paragraph';
 import { useEffect, useRef, useState } from 'react';
@@ -21,7 +20,6 @@ export default function NewJournalEntry() {
         holder: 'editor',
         tools: {
           title: Title,
-          checklist: CheckList,
           quote: Quote,
           paragraph: Paragraph,
         },
