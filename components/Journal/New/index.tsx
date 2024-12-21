@@ -3,8 +3,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import EditorJS from '@editorjs/editorjs';
-import Quote from '@editorjs/quote';
-import Paragraph from '@editorjs/paragraph';
 import { useEffect, useRef, useState } from 'react';
 import Title from 'title-editorjs';
 import dayjs from 'dayjs';
@@ -20,10 +18,8 @@ export default function NewJournalEntry() {
         holder: 'editor',
         tools: {
           title: Title,
-          quote: Quote,
-          paragraph: Paragraph,
         },
-        placeholder: 'Write your thoughts...',
+        placeholder: 'Finished chapter 3 of...',
         onChange: async () => {
           const content = await editorRef.current?.save();
           setEntry(JSON.stringify(content));
@@ -55,7 +51,9 @@ export default function NewJournalEntry() {
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <p>Add tags</p>
+            <p>
+              Add tags <span>(Max 5)</span>
+            </p>
             <TagCreator />
             <p>Write your accomplishments...</p>
             <form onSubmit={handleSubmit} className="space-y-4">

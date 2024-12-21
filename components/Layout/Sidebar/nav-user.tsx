@@ -50,7 +50,7 @@ export function NavUser({ user }: { user: User }) {
                 <>
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
-                      src={user!.photoURL ? user.photoURL : ''}
+                      src={user?.photoURL ? user?.photoURL : ''}
                       alt={user.displayName!}
                     />
                     <AvatarFallback className="rounded-lg">CN</AvatarFallback>

@@ -23,6 +23,9 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: Const.APP_NAME,
   description: Const.APP_DESCRIPTION,
+  icons: {
+    icon: [{ url: 'public/icon.png', sizes: '32x32' }],
+  },
 };
 
 export default async function RootLayout({

@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@editorjs/checklist": "^1.6.0",
     "@editorjs/editorjs": "^2.30.7",
     "@editorjs/header": "^2.8.8",
     "@editorjs/paragraph": "^2.11.7",
@@ -55,6 +54,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@editorjs/checklist": "^1.6.0",
     "@eslint/eslintrc": "^3",
     "@types/editorjs__header": "^2.6.3",
     "@types/firebase": "^2.4.32",

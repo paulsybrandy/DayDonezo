@@ -18,6 +18,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 
 type Tag = {
   value: string;
@@ -39,11 +41,15 @@ export function TagCreator() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState('');
   const [tags, setTags] = React.useState<Tag[]>([]);
-  const [selectedColor, setSelectedColor] = React.useState(colors[0]);
 
   const createTag = (tag: string) => {
+    if (tags.length >= 5) {
+      toast.error('You can only add up to 5 tags');
+      return;
+    }
+    const random = Math.floor(Math.random() * (6 - 0) + 0);
     if (tag && !tags.some((t) => t.value === tag)) {
-      setTags([...tags, { value: tag, color: selectedColor.value }]);
+      setTags([...tags, { value: tag, color: colors[random].value }]);
       setValue('');
       setOpen(false);
     }
@@ -85,7 +91,7 @@ export function TagCreator() {
                   Create &quot;{value}&quot;
                 </Button>
               </CommandEmpty>
-              <CommandGroup heading="Existing Tags">
+              {/* <CommandGroup heading="Existing Tags">
                 {tags.map((tag) => (
                   <CommandItem
                     key={tag.value}
@@ -104,34 +110,8 @@ export function TagCreator() {
                     <X className="ml-auto h-4 w-4 opacity-50" />
                   </CommandItem>
                 ))}
-              </CommandGroup>
-              <CommandSeparator />
-              <CommandGroup heading="Select Color">
-                {colors.map((color) => (
-                  <CommandItem
-                    key={color.value}
-                    onSelect={() => setSelectedColor(color)}
-                  >
-                    <div className="flex items-center">
-                      <div
-                        className="mr-2 h-4 w-4 rounded-full"
-                        style={{ backgroundColor: color.value }}
-                      />
-                      {color.name}
-                    </div>
-                    <Check
-                      className={cn(
-                        'ml-auto h-4 w-4',
-                        selectedColor.value === color.value
-                          ? 'opacity-100'
-                          : 'opacity-0'
-                      )}
-                    />
-                  </CommandItem>
-                ))}
-              </CommandGroup>
+              </CommandGroup> */}
             </CommandList>
-            <CommandSeparator />
             <CommandList>
               <CommandGroup>
                 <CommandItem
@@ -147,22 +127,26 @@ export function TagCreator() {
       </Popover>
       <div className="flex flex-wrap gap-2">
         {tags.map((tag) => (
-          <span
+          <Badge
             key={tag.value}
-            className="inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold"
-            style={{
-              backgroundColor: tag.color,
-              color: getContrastColor(tag.color),
-            }}
+            variant="outline"
+            className="inline-flex items-center space-x-2 rounded-full px-3 py-1 text-sm font-semibold"
           >
-            {tag.value}
+            <div
+              style={{
+                backgroundColor: tag.color,
+                color: getContrastColor(tag.color),
+              }}
+              className="h-3 w-3 rounded-full"
+            ></div>
+            <span>{tag.value}</span>
             <button
               onClick={() => removeTag(tag.value)}
               className="ml-2 inline-flex items-center justify-center rounded-full bg-transparent p-1"
             >
               ×
             </button>
-          </span>
+          </Badge>
         ))}
       </div>
     </div>
