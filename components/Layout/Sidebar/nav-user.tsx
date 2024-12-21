@@ -19,23 +19,12 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { User } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
-import { useMutation } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAuth } from '@/app/_providers/auth-provider';
 
 export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar();
-
-  const router = useRouter();
-  const logoutMutation = useMutation({
-    mutationFn: async () => {
-      await fetch('/api/logout');
-    },
-    onSuccess: () => {
-      router.push('/');
-      router.refresh();
-    },
-  });
+  const { signOut } = useAuth();
 
   return (
     <SidebarMenu>
@@ -132,7 +121,7 @@ export function NavUser({ user }: { user: User }) {
               </DropdownMenuItem> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={async () => logoutMutation.mutate()}>
+            <DropdownMenuItem onClick={async () => signOut()}>
               <LogOut />
               Log out
             </DropdownMenuItem>

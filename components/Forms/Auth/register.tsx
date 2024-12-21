@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import {
   createUserWithEmailAndPassword,
   getAuth,
@@ -37,6 +36,7 @@ import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { useMutation } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
+import { useAuth } from '@/app/_providers/auth-provider';
 
 const registerFormSchema = z
   .object({
@@ -51,12 +51,11 @@ const registerFormSchema = z
   });
 
 export default function RegisterForm() {
+  const { login } = useAuth();
   const googleProvider = new GoogleAuthProvider();
   googleProvider.setCustomParameters({ prompt: 'select_account' });
 
   const githubProvider = new GithubAuthProvider();
-
-  const router = useRouter();
 
   const registerForm = useForm<z.infer<typeof registerFormSchema>>({
     resolver: zodResolver(registerFormSchema),
@@ -97,8 +96,9 @@ export default function RegisterForm() {
           Authorization: `Bearer ${idToken}`,
         },
       });
-
-      router.refresh();
+    },
+    onSuccess: () => {
+      login();
     },
   });
 

@@ -64,25 +64,25 @@ export type Entries = {
 };
 
 const tagColors: Record<string, string> = {
-  database: 'yellow',
-  optimization: 'blue',
-  analytics: 'cyan',
-  dashboard: 'gray',
-  teamwork: 'red',
-  codereview: 'yellow',
-  darkmode: 'blue',
-  ui: 'cyan',
-  refactoring: 'gray',
-  performance: 'red',
-  learning: 'yellow',
-  websockets: 'blue',
-  bugfix: 'cyan',
-  meeting: 'gray',
-  planning: 'red',
-  css: 'red',
-  frontend: 'red',
-  coding: 'red',
-  auth: 'red',
+  database: '#EAB308',
+  optimization: '#3B82F6',
+  analytics: '#06B6D4',
+  dashboard: '#6B7280',
+  teamwork: '#EF4444',
+  codereview: '#EAB308',
+  darkmode: '#3B82F6',
+  ui: '#06B6D4',
+  refactoring: '#6B7280',
+  performance: '#EF4444',
+  learning: '#EAB308',
+  websockets: '#3B82F6',
+  bugfix: '#06B6D4',
+  meeting: '#6B7280',
+  planning: '#EF4444',
+  css: '#EF4444',
+  frontend: '#EF4444',
+  coding: '#EF4444',
+  auth: '#EF4444',
 };
 
 const moodEmojis: { [key: string]: string } = {
@@ -167,7 +167,8 @@ export const columns: ColumnDef<Entries>[] = [
             <Badge
               key={tag}
               variant="outline"
-              className={`bg-${tagColors[tag] || 'gray'}-500 hover:bg-${tagColors[tag]}-600`}
+              style={{ backgroundColor: tagColors[tag] }}
+              className="text-white"
             >
               <Tag className="mr-1 h-4 w-4" />
               {tag}
@@ -312,7 +313,8 @@ export function DataTableDemo({ mockEntries }: { mockEntries: Entries[] }) {
                     >
                       <Badge
                         variant="default"
-                        className={`bg-${tagColors[tag] || 'gray'}-500 hover:bg-${tagColors[tag]}-600`}
+                        style={{ backgroundColor: tagColors[tag] }}
+                        className="text-white"
                       >
                         {tag}
                       </Badge>

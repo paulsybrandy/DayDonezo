@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle } from '../ui/card';
 import AccountDetailsForm from '../Forms/Settings/account-details-form';
 import Preferences from '../Forms/Settings/preferences';
+import OtherDetails from './other-details';
 
 export default function SettingsComponent() {
   return (
@@ -18,6 +19,12 @@ export default function SettingsComponent() {
             <CardTitle>Preferences</CardTitle>
           </CardHeader>
           <Preferences />
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Other Details</CardTitle>
+          </CardHeader>
+          <OtherDetails />
         </Card>
       </div>
     </section>

@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import {
   getAuth,
   GithubAuthProvider,
@@ -36,6 +35,7 @@ import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { useMutation } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
+import { useAuth } from '@/app/_providers/auth-provider';
 
 const loginFormSchema = z.object({
   email: z.string().email(),
@@ -43,12 +43,11 @@ const loginFormSchema = z.object({
 });
 
 export default function LoginForm() {
+  const { login } = useAuth();
   const googleProvider = new GoogleAuthProvider();
   googleProvider.setCustomParameters({ prompt: 'select_account' });
 
   const githubProvider = new GithubAuthProvider();
-
-  const router = useRouter();
 
   const loginForm = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -87,8 +86,9 @@ export default function LoginForm() {
           Authorization: `Bearer ${idToken}`,
         },
       });
-
-      router.refresh();
+    },
+    onSuccess: () => {
+      login();
     },
   });
 

@@ -32,7 +32,7 @@ export default async function HeroSection() {
       <div className="mt-8">
         <Particles
           className="absolute inset-0"
-          quantity={200}
+          quantity={250}
           ease={80}
           color={'#f01757'}
           refresh

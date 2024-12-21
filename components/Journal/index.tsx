@@ -128,25 +128,25 @@ export const tagColors: Record<string, string> = {
 };
 
 export default function JournalComponent() {
+  const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [selectedEntry, setSelectedEntry] = useState<(typeof mockEntries)[0]>();
 
   const formatDay: DateFormatter = (day) => {
     const dateGregorian = dayjs(day).format('D');
 
+    const formattedDate = dayjs(date).format('DD/MM/YYYY');
+    const formattedDay = dayjs(day).format('DD/MM/YYYY');
+    const isToday = formattedDate === formattedDay;
+    const isPastDate = dayjs(day).isBefore(dayjs());
+    const isInMockEntries = mockEntries
+      .map((item) => dayjs(item.date).format('DD/MM/YYYY'))
+      .includes(formattedDay);
+
     return (
       <div>
-        {mockEntries
-          .map((item) => dayjs(item.date).format('DD/MM/YYYY'))
-          .includes(dayjs(day).format('DD/MM/YYYY')) ? (
-          <p
-            className={cn(
-              dayjs(date).format('DD/MM/YYYY') ===
-                dayjs(day).format('DD/MM/YYYY')
-                ? 'text-white'
-                : 'text-green-500'
-            )}
-          >
+        {isInMockEntries ? (
+          <p className={cn(isToday ? 'text-white' : 'text-green-500')}>
             <span className="text-sm">{dateGregorian}</span>
             <span className="block text-[0.2rem] leading-3">
               <Check size={10} />
@@ -156,10 +156,11 @@ export default function JournalComponent() {
           <span
             className={cn(
               'text-sm',
-              dayjs(date).format('DD/MM/YYYY') ===
-                dayjs(day).format('DD/MM/YYYY')
+              isToday
                 ? 'text-white'
-                : 'text-red-500'
+                : isPastDate
+                  ? 'text-red-500'
+                  : 'text-black'
             )}
           >
             {dateGregorian}
@@ -177,7 +178,7 @@ export default function JournalComponent() {
             <CardTitle>Journal Entries</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-4 lg:flex-row">
-            <Popover>
+            <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild className="flex lg:hidden">
                 <Button
                   variant={'outline'}
@@ -207,7 +208,9 @@ export default function JournalComponent() {
                           dayjs(day).format('DD-MM-YYYY')
                       )
                     );
+                    setOpen(false);
                   }}
+                  formatters={{ formatDay }}
                   disabled={(day) => dayjs(day) >= dayjs(new Date())}
                   initialFocus
                 />

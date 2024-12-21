@@ -15,7 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { CardContent, CardFooter } from '@/components/ui/card';
 import { useAuth } from '@/app/_providers/auth-provider';
-import { Save } from 'lucide-react';
+import { Loader2, LogOut, Save } from 'lucide-react';
 
 const formSchema = z.object({
   username: z.string().min(3),
@@ -23,7 +23,7 @@ const formSchema = z.object({
 });
 
 export default function AccountDetailsForm() {
-  const { user } = useAuth();
+  const { user, loading, signOut } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -85,10 +85,20 @@ export default function AccountDetailsForm() {
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="my-0">
+      <CardFooter className="my-0 justify-between">
         <Button type="submit" form="account-details-form" disabled={!user}>
           <Save />
           Save
+        </Button>
+        <Button variant={'outline'} onClick={signOut} disabled={loading}>
+          {' '}
+          {loading ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            <>
+              Logout <LogOut />
+            </>
+          )}
         </Button>
       </CardFooter>
     </>
