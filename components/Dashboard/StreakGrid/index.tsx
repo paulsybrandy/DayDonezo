@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {
   Tooltip,
@@ -5,6 +7,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useUserStore } from '@/store/userStore';
+import dayjs from 'dayjs';
 
 interface StreakDay {
   date: string;
@@ -16,6 +20,16 @@ interface StreakProps {
 }
 
 const StreaksGrids: React.FC<StreakProps> = ({ streakData }) => {
+  const entries = useUserStore((state) => state.user?.Entries);
+
+  streakData.forEach((day) => {
+    const dayFormatted = dayjs(day.date).format('DD/MM/YYYY');
+    day.active =
+      entries?.some(
+        (entry) => dayjs(entry.created_at).format('DD/MM/YYYY') === dayFormatted
+      ) ?? false;
+  });
+
   const weeks = Math.ceil(streakData.length / 7);
 
   return (
@@ -39,12 +53,13 @@ const StreaksGrids: React.FC<StreakProps> = ({ streakData }) => {
                             ? 'bg-[hsl(349,100%,55.5%)]'
                             : 'bg-gray-200 dark:bg-gray-700'
                         }`}
-                        aria-label={`${day.active ? 'Active' : 'Inactive'} on ${day.date}`}
+                        aria-label={`${day.active ? 'Win' : 'Unable to win'} on ${dayjs(day.date).format('D MMM YYYY')}`}
                       ></div>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>
-                        {day.active ? 'Active' : 'Inactive'} on {day.date}
+                        {day.active ? 'Win' : 'Unable to win'} on{' '}
+                        {dayjs(day.date).format('D MMM YYYY')}
                       </p>
                     </TooltipContent>
                   </Tooltip>

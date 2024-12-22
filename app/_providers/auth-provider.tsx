@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
   ReactNode,
+  useCallback,
 } from 'react';
 import {
   User,
@@ -17,7 +18,8 @@ import { app } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { saveUserToDb } from './actions';
+import { getUserFromDb, saveUserToDb } from './actions';
+import { useUserStore } from '@/store/userStore';
 
 interface AuthContextType {
   user: User | null;
@@ -34,21 +36,28 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setAuthUser] = useState<User | null>(null);
+  const setUser = useUserStore((state) => state.setUser);
   const router = useRouter();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(getAuth(app), async (user) => {
+  const updateUser = useCallback(
+    async (user: User | null) => {
       if (user) {
-        setUser(user);
+        setAuthUser(user);
+        const userDetails = await getUserFromDb(user.uid);
+        setUser(userDetails);
       } else {
         toast.error('No user found');
         await fetch('/api/logout');
       }
-    });
+    },
+    [setAuthUser, setUser]
+  );
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(getAuth(app), updateUser);
     return () => unsubscribe();
-  }, []);
+  }, [updateUser]);
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
@@ -63,7 +72,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async () => {
     onAuthStateChanged(getAuth(app), async (user) => {
       if (user) {
-        setUser(user);
+        setAuthUser(user);
+        const userDetails = await getUserFromDb(user.uid);
+        console.log(userDetails);
+        setUser(userDetails);
         router.refresh();
       } else {
         toast.error('No user found');
@@ -74,7 +86,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signOut = async () => {
     await logoutMutation.mutate();
-    setUser(null);
+    setAuthUser(null);
   };
 
   const saveUser = async (user: UserCredential['user']) => {

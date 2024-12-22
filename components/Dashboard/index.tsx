@@ -1,18 +1,10 @@
 import React from 'react';
 import StreakGrid from './StreakGrid';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '../ui/card';
+import { Card, CardContent, CardHeader } from '../ui/card';
 import { getUser } from '@/lib/auth';
 import dayjs from 'dayjs';
-import { cn } from '@/lib/utils';
-import { Flame, PenLine } from 'lucide-react';
-import { Button } from '../ui/button';
+import StreakCount from './streak-count';
+import NewEntry from './new-entry';
 
 const generateSampleData = () => {
   const data = [];
@@ -22,7 +14,7 @@ const generateSampleData = () => {
     date.setDate(date.getDate() - i);
     data.push({
       date: date.toISOString().split('T')[0],
-      active: Math.random() < 0.5,
+      active: false,
     });
   }
   return data;
@@ -30,8 +22,8 @@ const generateSampleData = () => {
 
 export default async function DashboardComponent() {
   const user = await getUser();
-
   const streakData = generateSampleData();
+
   return (
     <section className="h-auto w-full place-content-center p-6 py-3 lg:px-16">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -54,34 +46,12 @@ export default async function DashboardComponent() {
               What are you grateful for today?
             </p>
           </CardContent>
-          <CardFooter className="">
-            <Button className="w-full" size={'lg'}>
-              <PenLine className="mr-2 h-4 w-4" />
-              New Entry
-            </Button>
-          </CardFooter>
+          <NewEntry />
         </Card>
 
         <Card className="content-center">
           <CardHeader>
-            <CardTitle className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Your Progress</h2>
-              <Card
-                className={cn(
-                  'inline-flex items-center gap-2 border-orange-100 bg-orange-50 p-3 text-base'
-                )}
-              >
-                <Flame className="h-5 w-5 text-orange-500" />
-                <span className="font-medium text-orange-700">
-                  5-day streak
-                </span>
-              </Card>
-            </CardTitle>
-            <CardDescription>
-              <p className="text-base text-muted-foreground">
-                Keep going! You&apos;re building a great habit. 🌟
-              </p>
-            </CardDescription>
+            <StreakCount />
           </CardHeader>
         </Card>
       </div>

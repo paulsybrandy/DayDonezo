@@ -35,3 +35,23 @@ export async function saveUserToDb({
     throw new Error('Error saving user to database');
   }
 }
+
+export async function getUserFromDb(uid: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        uid,
+      },
+      include: {
+        Entries: {
+          include: {
+            Tags: true,
+          },
+        },
+      },
+    });
+    return user;
+  } catch {
+    throw new Error('Error fetching user from database');
+  }
+}
