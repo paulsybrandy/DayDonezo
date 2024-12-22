@@ -178,7 +178,6 @@ export const columns: ColumnDef<Entries>[] = [
       );
     },
     filterFn: (row, columnId, filterValue) => {
-      console.log(filterValue);
       if (!filterValue) return false;
       return row.original.tags.includes(filterValue); // true or false based on your custom logic
     },

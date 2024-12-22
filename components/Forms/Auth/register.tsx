@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import {
   createUserWithEmailAndPassword,
+  getAdditionalUserInfo,
   getAuth,
   GithubAuthProvider,
   GoogleAuthProvider,
@@ -51,7 +52,7 @@ const registerFormSchema = z
   });
 
 export default function RegisterForm() {
-  const { login } = useAuth();
+  const { login, saveUser } = useAuth();
   const googleProvider = new GoogleAuthProvider();
   googleProvider.setCustomParameters({ prompt: 'select_account' });
 
@@ -89,6 +90,11 @@ export default function RegisterForm() {
       } else if (type === 2) {
         credentials = await signInWithPopup(getAuth(app), githubProvider);
       }
+
+      if (getAdditionalUserInfo(credentials!)?.isNewUser) {
+        await saveUser(credentials!.user);
+      }
+
       const idToken = await credentials!.user.getIdToken();
 
       await fetch('/api/login', {

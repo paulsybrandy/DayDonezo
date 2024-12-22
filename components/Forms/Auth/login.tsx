@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import {
+  getAdditionalUserInfo,
   getAuth,
   GithubAuthProvider,
   GoogleAuthProvider,
@@ -43,7 +44,7 @@ const loginFormSchema = z.object({
 });
 
 export default function LoginForm() {
-  const { login } = useAuth();
+  const { login, saveUser } = useAuth();
   const googleProvider = new GoogleAuthProvider();
   googleProvider.setCustomParameters({ prompt: 'select_account' });
 
@@ -77,6 +78,10 @@ export default function LoginForm() {
         credentials = await signInWithPopup(getAuth(app), googleProvider);
       } else if (type === 2) {
         credentials = await signInWithPopup(getAuth(app), githubProvider);
+      }
+
+      if (getAdditionalUserInfo(credentials!)?.isNewUser) {
+        await saveUser(credentials!.user);
       }
 
       const idToken = await credentials!.user.getIdToken();

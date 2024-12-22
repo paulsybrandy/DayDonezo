@@ -7,17 +7,24 @@ import {
   useState,
   ReactNode,
 } from 'react';
-import { User, onAuthStateChanged, getAuth } from 'firebase/auth';
+import {
+  User,
+  onAuthStateChanged,
+  getAuth,
+  UserCredential,
+} from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { saveUserToDb } from './actions';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   signOut: () => void;
   login: () => void;
+  saveUser: (user: UserCredential['user']) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -54,9 +61,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   });
 
   const login = async () => {
-    onAuthStateChanged(getAuth(app), (user) => {
-      setUser(user);
-      router.refresh();
+    onAuthStateChanged(getAuth(app), async (user) => {
+      if (user) {
+        setUser(user);
+        router.refresh();
+      } else {
+        toast.error('No user found');
+        await fetch('/api/logout');
+      }
     });
   };
 
@@ -65,10 +77,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(null);
   };
 
+  const saveUser = async (user: UserCredential['user']) => {
+    if (user) {
+      await saveUserToDb({
+        uid: user.uid,
+        created_at: user.metadata.creationTime?.toString() || '',
+      });
+    } else {
+      toast.error('No user found');
+    }
+  };
+
   const value: AuthContextType = {
     user,
     signOut,
     login,
+    saveUser,
     loading: logoutMutation.isPending,
   };
 
