@@ -3,12 +3,12 @@
 import React from 'react';
 import { CardContent } from '../ui/card';
 import dayjs from 'dayjs';
-import { useAuth } from '@/app/_providers/auth-provider';
+import { useUser } from '@/app/_providers/user-provider';
 import RelativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(RelativeTime);
 export default function OtherDetails() {
-  const { user } = useAuth();
+  const { user } = useUser();
 
   return (
     <CardContent>

@@ -18,10 +18,10 @@ import { app } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { getUserFromDb, saveUserToDb } from './actions';
+import { getUserFromDb, saveUserToDb } from '../actions';
 import { useUserStore } from '@/store/userStore';
 
-interface AuthContextType {
+interface UserContextType {
   user: User | null;
   loading: boolean;
   signOut: () => void;
@@ -29,13 +29,13 @@ interface AuthContextType {
   saveUser: (user: UserCredential['user']) => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const UserContext = createContext<UserContextType | undefined>(undefined);
 
-interface AuthProviderProps {
+interface UserProviderProps {
   children: ReactNode;
 }
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export const UserProvider = ({ children }: UserProviderProps) => {
   const setUser = useUserStore((state) => state.setUser);
 
   const [user, setAuthUser] = useState<User | null>(null);
@@ -75,6 +75,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (user) {
         setAuthUser(user);
         const userDetails = await getUserFromDb(user.uid);
+        console.log(userDetails);
         setUser(userDetails);
         router.refresh();
       } else {
@@ -100,7 +101,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const value: AuthContextType = {
+  const value: UserContextType = {
     user,
     signOut,
     login,
@@ -108,11 +109,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     loading: logoutMutation.isPending,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
 
-export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
+export const useUser = (): UserContextType => {
+  const context = useContext(UserContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }

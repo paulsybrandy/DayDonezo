@@ -36,7 +36,7 @@ import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { useMutation } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
-import { useAuth } from '@/app/_providers/auth-provider';
+import { useUser } from '@/app/_providers/user-provider';
 
 const loginFormSchema = z.object({
   email: z.string().email(),
@@ -44,7 +44,7 @@ const loginFormSchema = z.object({
 });
 
 export default function LoginForm() {
-  const { login, saveUser } = useAuth();
+  const { login, saveUser } = useUser();
   const googleProvider = new GoogleAuthProvider();
   googleProvider.setCustomParameters({ prompt: 'select_account' });
 

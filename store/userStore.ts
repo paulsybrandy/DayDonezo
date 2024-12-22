@@ -6,10 +6,10 @@ interface User {
   current_streak: number;
   max_streak: number;
   last_entry_at: Date | null;
-  Entries: Entries[];
+  Entries: { created_at: Date }[];
 }
 
-interface Entries {
+export interface Entries {
   id: number;
   uid: string;
   content: string;
@@ -37,11 +37,15 @@ interface UserState {
   setUser: (user: User | null) => void;
   completionData: CompletionData[] | null;
   setCompletionData: (completionData: CompletionData[]) => void;
+  journalEntries: Entries[] | null;
+  setJournalEntries: (journalEntries: Entries[]) => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({
   user: null,
-  completionData: null,
   setUser: (user) => set({ user }),
+  completionData: null,
   setCompletionData: (completionData) => set({ completionData }),
+  journalEntries: null,
+  setJournalEntries: (journalEntries) => set({ journalEntries }),
 }));

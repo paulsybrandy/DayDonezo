@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Calendar } from '../ui/calendar';
 import { DateFormatter } from 'react-day-picker';
 import { CalendarIcon, Check, NotebookPen, Tag } from 'lucide-react';
@@ -17,93 +17,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { DataTableDemo } from '../Tables/entries-table';
-
-const moodEmojis: { [key: string]: string } = {
-  happy: '😊',
-  frustrated: '😣',
-  excited: '😃',
-  satisfied: '😌',
-  curious: '🤔',
-  focused: '🧐',
-  accomplished: '🎉',
-  collaborative: '🤝',
-  motivated: '💪',
-  productive: '⚡',
-};
-
-export const mockEntries = [
-  {
-    id: 1,
-    date: '2024-12-15',
-    content: 'Completed the user authentication module.',
-    mood: 'happy',
-    tags: ['coding', 'auth'],
-  },
-  {
-    id: 2,
-    date: '2024-12-14',
-    content: 'Struggled with CSS layouts, but finally got it working.',
-    mood: 'frustrated',
-    tags: ['css', 'frontend'],
-  },
-  {
-    id: 3,
-    date: '2024-12-13',
-    content: 'Had a productive meeting with the client. New feature ideas!',
-    mood: 'excited',
-    tags: ['meeting', 'planning'],
-  },
-  {
-    id: 4,
-    date: '2024-12-12',
-    content: 'Fixed several bugs in the dashboard component.',
-    mood: 'satisfied',
-    tags: ['bugfix', 'dashboard'],
-  },
-  {
-    id: 5,
-    date: '2024-12-11',
-    content:
-      'Learned about WebSockets and started implementing real-time updates.',
-    mood: 'curious',
-    tags: ['learning', 'websockets'],
-  },
-  {
-    id: 6,
-    date: '2024-12-10',
-    content: 'Refactored the state management logic for better performance.',
-    mood: 'focused',
-    tags: ['refactoring', 'performance'],
-  },
-  {
-    id: 7,
-    date: '2024-12-09',
-    content: 'Implemented dark mode across the entire application.',
-    mood: 'accomplished',
-    tags: ['darkmode', 'ui'],
-  },
-  {
-    id: 8,
-    date: '2024-12-08',
-    content: 'Conducted a code review session with the team.',
-    mood: 'collaborative',
-    tags: ['teamwork', 'codereview'],
-  },
-  {
-    id: 9,
-    date: '2024-12-07',
-    content: 'Started working on the new analytics dashboard.',
-    mood: 'motivated',
-    tags: ['analytics', 'dashboard'],
-  },
-  {
-    id: 10,
-    date: '2024-12-06',
-    content: 'Optimized database queries for faster load times.',
-    mood: 'productive',
-    tags: ['database', 'optimization'],
-  },
-];
+import { useMutation } from '@tanstack/react-query';
+import { getUserEntries } from '@/app/actions';
+import { Entries, useUserStore } from '@/store/userStore';
+import Loader from '../Layout/loader';
 
 export const tagColors: Record<string, string> = {
   database: 'yellow',
@@ -130,7 +47,42 @@ export const tagColors: Record<string, string> = {
 export default function JournalComponent() {
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
-  const [selectedEntry, setSelectedEntry] = useState<(typeof mockEntries)[0]>();
+  const [selectedEntry, setSelectedEntry] = useState<Entries>();
+
+  const user = useUserStore((state) => state.user);
+
+  const fetchEntriesRef = useRef(false);
+
+  const journalEntries = useUserStore((state) => state.journalEntries);
+  const setJournalEntries = useUserStore((state) => state.setJournalEntries);
+
+  const fetchEntriesMutation = useMutation({
+    mutationFn: async () => {
+      console.log(user?.uid);
+      if (user && user.uid) {
+        return await getUserEntries(user?.uid);
+      }
+    },
+    onSuccess: (result) => {
+      setJournalEntries(result!);
+      setSelectedEntry(
+        result?.find(
+          (item) =>
+            dayjs(item.created_at).format('DD-MM-YYYY') ===
+            dayjs(dayjs()).format('DD-MM-YYYY')
+        )
+      );
+    },
+  });
+
+  if (!journalEntries && !user) {
+    return <Loader />;
+  }
+
+  if (!journalEntries && user?.uid && !fetchEntriesRef.current) {
+    fetchEntriesRef.current = true;
+    fetchEntriesMutation.mutate();
+  }
 
   const formatDay: DateFormatter = (day) => {
     const dateGregorian = dayjs(day).format('D');
@@ -139,8 +91,8 @@ export default function JournalComponent() {
     const formattedDay = dayjs(day).format('DD/MM/YYYY');
     const isToday = formattedDate === formattedDay;
     const isPastDate = dayjs(day).isBefore(dayjs());
-    const isInMockEntries = mockEntries
-      .map((item) => dayjs(item.date).format('DD/MM/YYYY'))
+    const isInMockEntries = journalEntries
+      ?.map((item) => dayjs(item.created_at).format('DD/MM/YYYY'))
       .includes(formattedDay);
 
     return (
@@ -202,9 +154,9 @@ export default function JournalComponent() {
                   onSelect={(day) => {
                     setDate(day);
                     setSelectedEntry(
-                      mockEntries.find(
+                      journalEntries?.find(
                         (item) =>
-                          dayjs(item.date).format('DD-MM-YYYY') ===
+                          dayjs(item.created_at).format('DD-MM-YYYY') ===
                           dayjs(day).format('DD-MM-YYYY')
                       )
                     );
@@ -222,9 +174,9 @@ export default function JournalComponent() {
               onSelect={(day) => {
                 setDate(day);
                 setSelectedEntry(
-                  mockEntries.find(
+                  journalEntries?.find(
                     (item) =>
-                      dayjs(item.date).format('DD-MM-YYYY') ===
+                      dayjs(item.created_at).format('DD-MM-YYYY') ===
                       dayjs(day).format('DD-MM-YYYY')
                   )
                 );
@@ -243,23 +195,17 @@ export default function JournalComponent() {
                 {selectedEntry && (
                   <CardDescription>
                     <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline" className="text-lg">
-                        Mood: {moodEmojis[selectedEntry.mood]}{' '}
-                        {selectedEntry.mood}
-                      </Badge>
-                      {selectedEntry.tags.map((tag) => {
+                      {selectedEntry.Tags.map((tag) => {
                         const bgColor =
-                          tagColors[tag] ?? `bg-${tagColors[tag]}-500`;
-                        const hoverColor =
-                          tagColors[tag] ?? `hover:bg-${tagColors[tag]}-600`;
+                          tagColors[tag.color] ?? `#${tagColors[tag.color]}`;
                         return (
                           <Badge
-                            key={tag}
+                            key={tag.id}
                             variant="default"
-                            className={`${bgColor} ${hoverColor}`}
+                            style={{ backgroundColor: bgColor }}
                           >
                             <Tag className="mr-1 h-4 w-4" />
-                            {tag}
+                            {tag.name}
                           </Badge>
                         );
                       })}
@@ -295,7 +241,7 @@ export default function JournalComponent() {
             <CardTitle>Entries</CardTitle>
           </CardHeader>
           <CardContent>
-            <DataTableDemo mockEntries={mockEntries} />
+            {journalEntries && <DataTableDemo data={journalEntries!} />}
           </CardContent>
         </Card>
       </div>

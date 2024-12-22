@@ -13,8 +13,16 @@ import {
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import StreakData from './streak-data';
 import MonthlyCompletionChart from './monthly-completion-chart';
+import { useUserStore } from '@/store/userStore';
+import Loader from '../Layout/loader';
 
 export default function AnalyticsComponent() {
+  const { user, completionData } = useUserStore();
+
+  if (!user && !completionData) {
+    return <Loader />;
+  }
+
   const achievementData = {
     dailyStreak: {
       currentStreak: 1,

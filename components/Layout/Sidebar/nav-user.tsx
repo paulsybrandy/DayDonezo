@@ -20,11 +20,11 @@ import {
 } from '@/components/ui/sidebar';
 import { User } from 'firebase/auth';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useAuth } from '@/app/_providers/auth-provider';
+import { useUser } from '@/app/_providers/user-provider';
 
 export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar();
-  const { signOut } = useAuth();
+  const { signOut } = useUser();
 
   return (
     <SidebarMenu>

@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { CardContent, CardFooter } from '@/components/ui/card';
-import { useAuth } from '@/app/_providers/auth-provider';
+import { useUser } from '@/app/_providers/user-provider';
 import { Loader2, LogOut, Save } from 'lucide-react';
 
 const formSchema = z.object({
@@ -23,7 +23,7 @@ const formSchema = z.object({
 });
 
 export default function AccountDetailsForm() {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut } = useUser();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

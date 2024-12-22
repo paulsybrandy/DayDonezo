@@ -1,7 +1,7 @@
 'use client';
 
 import { CompletionData, useUserStore } from '@/store/userStore';
-import React from 'react';
+import React, { useRef } from 'react';
 
 import {
   XAxis,
@@ -20,7 +20,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '../ui/chart';
-import { getPast12MonthsCompletionData } from '@/app/_providers/actions';
+import { getPast12MonthsCompletionData } from '@/app/actions';
+import { useMutation } from '@tanstack/react-query';
 
 const chartConfig = {
   desktop: {
@@ -29,42 +30,32 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const getCompletionData = async () => {
-  return await getPast12MonthsCompletionData().then(
-    (result: CompletionData[]) => {
-      return result;
-    }
-  );
-};
-
-const loadingCompletionData = [
-  { monthIndex: 0, month: 'Jan', completedDays: 0, totalDays: 31 },
-  { monthIndex: 1, month: 'Feb', completedDays: 0, totalDays: 28 },
-  { monthIndex: 2, month: 'Apr', completedDays: 0, totalDays: 30 },
-  { monthIndex: 3, month: 'Mar', completedDays: 0, totalDays: 31 },
-  { monthIndex: 4, month: 'May', completedDays: 0, totalDays: 31 },
-  { monthIndex: 5, month: 'Jun', completedDays: 0, totalDays: 30 },
-  { monthIndex: 6, month: 'Jul', completedDays: 0, totalDays: 31 },
-  { monthIndex: 7, month: 'Aug', completedDays: 0, totalDays: 31 },
-  { monthIndex: 8, month: 'Sep', completedDays: 0, totalDays: 30 },
-  { monthIndex: 9, month: 'Oct', completedDays: 0, totalDays: 31 },
-  { monthIndex: 10, month: 'Nov', completedDays: 0, totalDays: 30 },
-  { monthIndex: 11, month: 'Dec', completedDays: 0, totalDays: 31 },
-];
-
 export default function MonthlyCompletionChart() {
+  const user = useUserStore((state) => state.user);
   const completionData = useUserStore((state) => state.completionData);
   const setCompletionData = useUserStore((state) => state.setCompletionData);
 
-  if (!completionData) {
-    setCompletionData(loadingCompletionData);
-    (async () => {
-      const result = await getCompletionData();
+  const fetchCompletionDataRef = useRef(false);
+
+  const getCompletionDataMutation = useMutation({
+    mutationFn: async () => {
+      return await getPast12MonthsCompletionData(user?.uid ?? '').then(
+        (result: CompletionData[]) => {
+          return result;
+        }
+      );
+    },
+    onSuccess: (result) => {
       setCompletionData(result);
-    })();
+    },
+  });
+
+  if (!completionData && user?.uid && !fetchCompletionDataRef.current) {
+    fetchCompletionDataRef.current = true;
+    getCompletionDataMutation.mutate();
   }
 
-  const monthlyCompletionData = completionData!.map((item) => ({
+  const monthlyCompletionData = completionData?.map((item) => ({
     ...item,
     completionPercentage: Math.round(
       (item.completedDays / item.totalDays) * 100

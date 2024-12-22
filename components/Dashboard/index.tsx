@@ -1,35 +1,34 @@
+'use client';
+
 import React from 'react';
 import StreakGrid from './StreakGrid';
 import { Card, CardContent, CardHeader } from '../ui/card';
-import { getUser } from '@/lib/auth';
 import dayjs from 'dayjs';
 import StreakCount from './streak-count';
 import NewEntry from './new-entry';
+import { useUser } from '@/app/_providers/user-provider';
+import Loader from '../Layout/loader';
 
-const generateSampleData = () => {
-  const data = [];
-  const today = new Date();
-  for (let i = 364; i >= 0; i--) {
-    const date = new Date(today);
-    date.setDate(date.getDate() - i);
-    data.push({
-      date: date.toISOString().split('T')[0],
-      active: false,
-    });
+export default function DashboardComponent({
+  streakData,
+}: {
+  streakData: {
+    date: string;
+    active: boolean;
+  }[];
+}) {
+  const { user } = useUser();
+
+  if (!user) {
+    return <Loader />;
   }
-  return data;
-};
-
-export default async function DashboardComponent() {
-  const user = await getUser();
-  const streakData = generateSampleData();
 
   return (
     <section className="h-auto w-full place-content-center p-6 py-3 lg:px-16">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="row-span-1 md:col-span-2">
           <h2 className="mb-2 text-4xl font-semibold">
-            Welcome back, {user?.name}!
+            Welcome back, {user?.displayName}!
           </h2>
           <span>{dayjs().format('dddd, MMMM DD,YYYY • h:mm a')}</span>
         </div>

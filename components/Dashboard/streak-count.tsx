@@ -60,7 +60,7 @@ export default function StreakCount() {
         <p className="text-base text-muted-foreground">
           {user
             ? user?.current_streak > 0
-              ? 'Keep going! You&apos;re building a great habit. 🌟'
+              ? `Keep going! You're building a great habit. 🌟`
               : "Didn't expected this from you!"
             : 'Hang tight, your wins are coming!'}
         </p>

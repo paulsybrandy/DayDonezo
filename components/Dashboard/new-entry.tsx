@@ -26,7 +26,7 @@ export default function NewEntry() {
               New Entry
             </>
           ) : (
-            'You have already won today!'
+            'Done for the day!'
           )}
         </Button>
       </Link>

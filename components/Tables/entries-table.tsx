@@ -18,6 +18,8 @@ import {
   Check,
   ChevronDown,
   ChevronsUpDown,
+  MoreHorizontal,
+  Share,
   Tag,
 } from 'lucide-react';
 
@@ -26,6 +28,7 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
@@ -54,49 +57,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-
-export type Entries = {
-  id: number;
-  date: string;
-  content: string;
-  mood: string;
-  tags: string[];
-};
-
-const tagColors: Record<string, string> = {
-  database: '#EAB308',
-  optimization: '#3B82F6',
-  analytics: '#06B6D4',
-  dashboard: '#6B7280',
-  teamwork: '#EF4444',
-  codereview: '#EAB308',
-  darkmode: '#3B82F6',
-  ui: '#06B6D4',
-  refactoring: '#6B7280',
-  performance: '#EF4444',
-  learning: '#EAB308',
-  websockets: '#3B82F6',
-  bugfix: '#06B6D4',
-  meeting: '#6B7280',
-  planning: '#EF4444',
-  css: '#EF4444',
-  frontend: '#EF4444',
-  coding: '#EF4444',
-  auth: '#EF4444',
-};
-
-const moodEmojis: { [key: string]: string } = {
-  happy: '😊',
-  frustrated: '😣',
-  excited: '😃',
-  satisfied: '😌',
-  curious: '🤔',
-  focused: '🧐',
-  accomplished: '🎉',
-  collaborative: '🤝',
-  motivated: '💪',
-  productive: '⚡',
-};
+import { Entries } from '@/store/userStore';
 
 export const columns: ColumnDef<Entries>[] = [
   // {
@@ -122,7 +83,7 @@ export const columns: ColumnDef<Entries>[] = [
   //   enableHiding: false,
   // },
   {
-    accessorKey: 'date',
+    accessorKey: 'created_at',
     header: ({ column }) => {
       return (
         <Button
@@ -136,7 +97,7 @@ export const columns: ColumnDef<Entries>[] = [
     },
     cell: ({ row }) => (
       <div className="capitalize">
-        {dayjs(row.getValue('date')).format('MMM D, YYYY')}
+        {dayjs(row.getValue('created_at')).format('MMM D, YYYY')}
       </div>
     ),
   },
@@ -163,15 +124,15 @@ export const columns: ColumnDef<Entries>[] = [
     cell: ({ row }) => {
       return (
         <div className="space-x-2">
-          {row.original.tags.map((tag) => (
+          {row.original.Tags.map((tag) => (
             <Badge
-              key={tag}
+              key={tag.id}
               variant="outline"
-              style={{ backgroundColor: tagColors[tag] }}
+              style={{ backgroundColor: `#${tag.color}` }}
               className="text-white"
             >
               <Tag className="mr-1 h-4 w-4" />
-              {tag}
+              {tag.name}
             </Badge>
           ))}
         </div>
@@ -179,48 +140,33 @@ export const columns: ColumnDef<Entries>[] = [
     },
     filterFn: (row, columnId, filterValue) => {
       if (!filterValue) return false;
-      return row.original.tags.includes(filterValue); // true or false based on your custom logic
+      return row.original.Tags.some((tag) => tag.name === filterValue); // true or false based on your custom logic
     },
   },
   {
-    accessorKey: 'mood',
-    header: 'Mood',
-    cell: ({ row }) => (
-      <div className="capitalize">{moodEmojis[row.original.mood]}</div>
-    ),
+    id: 'actions',
+    enableHiding: false,
+    cell: () => {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>
+              <Share /> Share
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
   },
-  // {
-  //   id: 'actions',
-  //   enableHiding: false,
-  //   cell: ({ row }) => {
-  //     const entry = row.original;
-
-  //     return (
-  //       <DropdownMenu>
-  //         <DropdownMenuTrigger asChild>
-  //           <Button variant="ghost" className="h-8 w-8 p-0">
-  //             <span className="sr-only">Open menu</span>
-  //             <MoreHorizontal />
-  //           </Button>
-  //         </DropdownMenuTrigger>
-  //         <DropdownMenuContent align="end">
-  //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-  //           <DropdownMenuItem
-  //             onClick={() => navigator.clipboard.writeText(entry.id)}
-  //           >
-  //             Copy payment ID
-  //           </DropdownMenuItem>
-  //           <DropdownMenuSeparator />
-  //           <DropdownMenuItem>View customer</DropdownMenuItem>
-  //           <DropdownMenuItem>View payment details</DropdownMenuItem>
-  //         </DropdownMenuContent>
-  //       </DropdownMenu>
-  //     );
-  //   },
-  // },
 ];
 
-export function DataTableDemo({ mockEntries }: { mockEntries: Entries[] }) {
+export function DataTableDemo({ data }: { data: Entries[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -230,12 +176,10 @@ export function DataTableDemo({ mockEntries }: { mockEntries: Entries[] }) {
   const [rowSelection, setRowSelection] = React.useState({});
 
   const [tagFilterOpen, setTagFilterOpen] = React.useState(false);
-  const [moodFilterOpen, setMoodFilterOpen] = React.useState(false);
   const [tagValue, setTagValue] = React.useState('');
-  const [moodValue, setMoodValue] = React.useState('');
 
   const table = useReactTable({
-    data: mockEntries,
+    data,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -253,12 +197,7 @@ export function DataTableDemo({ mockEntries }: { mockEntries: Entries[] }) {
     },
   });
 
-  const allTags = Array.from(
-    new Set(mockEntries.flatMap((entry) => entry.tags))
-  );
-  const allMoods = Array.from(
-    new Set(mockEntries.flatMap((entry) => entry.mood))
-  );
+  const allTags = Array.from(new Set(data.flatMap((entry) => entry.Tags)));
 
   return (
     <div className="w-full">
@@ -283,7 +222,7 @@ export function DataTableDemo({ mockEntries }: { mockEntries: Entries[] }) {
               className="w-[200px] justify-between"
             >
               {tagValue
-                ? allTags.find((tag) => tag === tagValue)
+                ? allTags.find((tag) => tag.name === tagValue)?.name
                 : 'Select tags...'}
               <ChevronsUpDown className="opacity-50" />
             </Button>
@@ -296,8 +235,8 @@ export function DataTableDemo({ mockEntries }: { mockEntries: Entries[] }) {
                 <CommandGroup>
                   {allTags.map((tag) => (
                     <CommandItem
-                      key={tag}
-                      value={tag}
+                      key={tag.id}
+                      value={tag.name}
                       onSelect={(currentValue) => {
                         setTagValue(
                           currentValue === tagValue ? '' : currentValue
@@ -312,69 +251,16 @@ export function DataTableDemo({ mockEntries }: { mockEntries: Entries[] }) {
                     >
                       <Badge
                         variant="default"
-                        style={{ backgroundColor: tagColors[tag] }}
+                        style={{ backgroundColor: `#${tag}` }}
                         className="text-white"
                       >
-                        {tag}
+                        {tag.name}
                       </Badge>
 
                       <Check
                         className={cn(
                           'ml-auto',
-                          tagValue === tag ? 'opacity-100' : 'opacity-0'
-                        )}
-                      />
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
-
-        {/* MOOD FILTER */}
-        <Popover open={moodFilterOpen} onOpenChange={setMoodFilterOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={moodFilterOpen}
-              className="w-[200px] justify-between"
-            >
-              {moodValue
-                ? moodEmojis[allMoods.find((mood) => mood === moodValue)!]
-                : 'Select mood...'}
-              <ChevronsUpDown className="opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[200px] p-0">
-            <Command>
-              <CommandInput placeholder="Search tag..." />
-              <CommandList>
-                <CommandEmpty>No mood found.</CommandEmpty>
-                <CommandGroup>
-                  {allMoods.map((mood) => (
-                    <CommandItem
-                      key={mood}
-                      value={mood}
-                      onSelect={(currentValue) => {
-                        setMoodValue(
-                          currentValue === moodValue ? '' : currentValue
-                        );
-                        setMoodFilterOpen(false);
-                        table
-                          .getColumn('mood')
-                          ?.setFilterValue(
-                            currentValue === moodValue ? '' : currentValue
-                          );
-                      }}
-                    >
-                      {moodEmojis[mood]}
-
-                      <Check
-                        className={cn(
-                          'ml-auto',
-                          moodValue === mood ? 'opacity-100' : 'opacity-0'
+                          tagValue === tag.name ? 'opacity-100' : 'opacity-0'
                         )}
                       />
                     </CommandItem>

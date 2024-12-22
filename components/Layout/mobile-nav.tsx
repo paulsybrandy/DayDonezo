@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { BookText, ChartArea, LayoutDashboard } from 'lucide-react';
-import { useAuth } from '@/app/_providers/auth-provider';
+import { useUser } from '@/app/_providers/user-provider';
 import { Avatar, AvatarImage } from '../ui/avatar';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -24,7 +24,7 @@ const menuItems = [
 
 export default function MobileNavComponent() {
   const location = usePathname();
-  const { user } = useAuth();
+  const { user } = useUser();
 
   return (
     <section className="fixed bottom-0 order-2 mx-auto block w-full border-t bg-white py-1 lg:hidden">

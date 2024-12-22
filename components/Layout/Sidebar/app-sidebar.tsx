@@ -17,7 +17,7 @@ import {
   SidebarFooter,
   SidebarRail,
 } from '@/components/ui/sidebar';
-import { useAuth } from '@/app/_providers/auth-provider';
+import { useUser } from '@/app/_providers/user-provider';
 
 const data = {
   navMain: [
@@ -50,7 +50,7 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useAuth();
+  const { user } = useUser();
 
   return (
     <Sidebar
