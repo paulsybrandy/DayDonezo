@@ -9,31 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  XAxis,
-  CartesianGrid,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  Radar,
-  Line,
-  LabelList,
-  LineChart,
-} from 'recharts';
-import { AlertCircle, CheckCircle2 } from 'lucide-react';
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '../ui/chart';
 
-const chartConfig = {
-  desktop: {
-    label: 'Desktop',
-    color: 'hsl(var(--chart-1))',
-  },
-} satisfies ChartConfig;
+import { AlertCircle, CheckCircle2 } from 'lucide-react';
+import StreakData from './streak-data';
+import MonthlyCompletionChart from './monthly-completion-chart';
 
 export default function AnalyticsComponent() {
   const achievementData = {
@@ -57,30 +36,20 @@ export default function AnalyticsComponent() {
       { name: 'Relationships', value: 20 },
     ],
     monthlyCompletionRate: [
-      { month: 'Jan', completedDays: 18, totalDays: 31 },
-      { month: 'Feb', completedDays: 10, totalDays: 29 },
-      { month: 'Mar', completedDays: 6, totalDays: 31 },
-      { month: 'Apr', completedDays: 15, totalDays: 30 },
-      { month: 'May', completedDays: 21, totalDays: 31 },
-      { month: 'Jun', completedDays: 10, totalDays: 30 },
-      { month: 'Jul', completedDays: 16, totalDays: 31 },
-      { month: 'Aug', completedDays: 19, totalDays: 31 },
-      { month: 'Sep', completedDays: 7, totalDays: 30 },
-      { month: 'Oct', completedDays: 15, totalDays: 31 },
-      { month: 'Nov', completedDays: 5, totalDays: 30 },
-      { month: 'Dec', completedDays: 10, totalDays: 31 },
+      { month: 'Jan', completedDays: 0, totalDays: 31 },
+      { month: 'Feb', completedDays: 0, totalDays: 29 },
+      { month: 'Mar', completedDays: 0, totalDays: 31 },
+      { month: 'Apr', completedDays: 0, totalDays: 30 },
+      { month: 'May', completedDays: 0, totalDays: 31 },
+      { month: 'Jun', completedDays: 0, totalDays: 30 },
+      { month: 'Jul', completedDays: 0, totalDays: 31 },
+      { month: 'Aug', completedDays: 0, totalDays: 31 },
+      { month: 'Sep', completedDays: 0, totalDays: 30 },
+      { month: 'Oct', completedDays: 1, totalDays: 31 },
+      { month: 'Nov', completedDays: 1, totalDays: 30 },
+      { month: 'Dec', completedDays: 3, totalDays: 31 },
     ],
   };
-
-  const monthlyCompletionData = achievementData.monthlyCompletionRate.map(
-    (item) => ({
-      ...item,
-      completionPercentage: (
-        (item.completedDays / item.totalDays) *
-        100
-      ).toFixed(0),
-    })
-  );
 
   return (
     <div className="w-full flex-1 space-y-4 overflow-auto p-4 py-4 lg:px-16">
@@ -91,24 +60,7 @@ export default function AnalyticsComponent() {
             <CardTitle>Daily Entry Streak</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-4xl font-bold text-green-600">
-                  {achievementData.dailyStreak.currentStreak} Days
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Current Streak
-                </div>
-              </div>
-              <div>
-                <div className="text-2xl font-semibold text-blue-600">
-                  {achievementData.dailyStreak.longestStreak} Days
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Longest Streak
-                </div>
-              </div>
-            </div>
+            <StreakData />
 
             {/* Daily Entry Tracking */}
             <div className="flex space-x-2">
@@ -169,111 +121,7 @@ export default function AnalyticsComponent() {
             <CardDescription>January - December 2024</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig} className="lg:block">
-              <LineChart
-                accessibilityLayer
-                data={monthlyCompletionData}
-                margin={{
-                  top: 20,
-                  left: 12,
-                  right: 12,
-                }}
-              >
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="month"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, 3)}
-                />
-                <ChartTooltip
-                  cursor={true}
-                  content={<ChartTooltipContent indicator="line" />}
-                  formatter={(value) => ['Completion Rate ', `${value}%`]}
-                />
-                <Line
-                  dataKey="completionPercentage"
-                  type="linear"
-                  stroke="var(--color-desktop)"
-                  strokeWidth={2}
-                  dot={{
-                    fill: 'var(--color-desktop)',
-                  }}
-                  activeDot={{
-                    r: 6,
-                  }}
-                >
-                  <LabelList
-                    position="right"
-                    offset={12}
-                    className="fill-foreground"
-                    fontSize={12}
-                    formatter={(value: string) => [`${value}%`]}
-                  />
-                </Line>
-              </LineChart>
-              {/* <BarChart accessibilityLayer data={monthlyCompletionData}>
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="month"
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                  tickFormatter={(value) => value.slice(0, 3)}
-                />
-                <ChartTooltip
-                  cursor={false}
-                  formatter={(value) => ['Completion Rate ', `${value}%`]}
-                  content={<ChartTooltipContent hideLabel />}
-                />
-
-                <Bar
-                  dataKey="completionPercentage"
-                  className="opacity-95"
-                  fill="var(--color-desktop)"
-                  radius={8}
-                  label={({ x, y, width, value }) => (
-                    <text
-                      x={x + width / 2}
-                      y={y}
-                      dy={-10}
-                      textAnchor="middle"
-                      fill="#666"
-                    >
-                      {value}%
-                    </text>
-                  )}
-                />
-              </BarChart> */}
-            </ChartContainer>
-
-            <ChartContainer
-              config={chartConfig}
-              className="mx-auto block aspect-square max-h-[250px] lg:hidden"
-            >
-              <RadarChart data={monthlyCompletionData}>
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent />}
-                  formatter={(value) => ['Completion Rate ', `${value}%`]}
-                />
-                <PolarGrid
-                  className="fill-[--color-desktop] opacity-20"
-                  // gridType="circle"
-                />
-                <PolarAngleAxis dataKey="month" />
-                <Radar
-                  dataKey="completionPercentage"
-                  fill="var(--color-desktop)"
-                  fillOpacity={0.5}
-                  dot={{
-                    r: 4,
-                    fillOpacity: 1,
-                  }}
-                />
-              </RadarChart>
-            </ChartContainer>
+            <MonthlyCompletionChart />
           </CardContent>
           <CardFooter className="flex-col items-start gap-2 text-sm">
             {/* <div className="flex gap-2 font-medium leading-none">

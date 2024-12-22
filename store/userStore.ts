@@ -25,12 +25,23 @@ interface Tags {
   entry_id: number;
 }
 
+export interface CompletionData {
+  monthIndex: number;
+  month: string;
+  completedDays: number;
+  totalDays: number;
+}
+
 interface UserState {
   user: User | null;
   setUser: (user: User | null) => void;
+  completionData: CompletionData[] | null;
+  setCompletionData: (completionData: CompletionData[]) => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({
   user: null,
+  completionData: null,
   setUser: (user) => set({ user }),
+  setCompletionData: (completionData) => set({ completionData }),
 }));

@@ -36,8 +36,9 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setAuthUser] = useState<User | null>(null);
   const setUser = useUserStore((state) => state.setUser);
+
+  const [user, setAuthUser] = useState<User | null>(null);
   const router = useRouter();
 
   const updateUser = useCallback(
@@ -74,7 +75,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (user) {
         setAuthUser(user);
         const userDetails = await getUserFromDb(user.uid);
-        console.log(userDetails);
         setUser(userDetails);
         router.refresh();
       } else {
