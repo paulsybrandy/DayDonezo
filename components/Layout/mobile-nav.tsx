@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { BookText, ChartArea, LayoutDashboard } from 'lucide-react';
-import { useUser } from '@/app/_providers/user-provider';
 import { Avatar } from '../ui/avatar';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import UserAvatar from '../ui/user-avatar';
+import { useUserStore } from '@/store/userStore';
 
 const menuItems = [
   {
@@ -25,7 +25,7 @@ const menuItems = [
 
 export default function MobileNavComponent() {
   const location = usePathname();
-  const { user } = useUser();
+  const user = useUserStore((state) => state.user);
 
   return (
     <section className="fixed bottom-0 order-2 mx-auto block w-full border-t bg-white py-1 lg:hidden">
@@ -46,7 +46,7 @@ export default function MobileNavComponent() {
           <Link href={'/settings'}>
             <Avatar className="h-6 w-6">
               {/* <AvatarImage src={user.photoURL!} /> */}
-              <UserAvatar username={user.displayName!} />
+              <UserAvatar username={user.avatar_seed} />
             </Avatar>
           </Link>
         )}

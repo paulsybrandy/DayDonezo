@@ -6,7 +6,7 @@ interface User {
   current_streak: number;
   max_streak: number;
   last_entry_at: Date | null;
-  avatar_seed: string;
+  avatar_seed: string | null;
   Entries: { created_at: Date }[];
 }
 
