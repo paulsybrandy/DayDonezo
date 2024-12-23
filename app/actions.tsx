@@ -1,5 +1,6 @@
 'use server';
 
+import { getUser } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { CompletionData } from '@/store/userStore';
 import dayjs from 'dayjs';
@@ -12,13 +13,13 @@ export async function saveUserToDb({
   created_at: string;
 }) {
   try {
+    const authUser = await getUser();
     const userExists = await prisma.user.findUnique({
       where: {
         uid,
       },
     });
     if (userExists) {
-      console.log('User already exists');
       return true;
     }
     const user = await prisma.user.create({
@@ -27,6 +28,7 @@ export async function saveUserToDb({
         created_at: dayjs(created_at).toISOString(),
         current_streak: 0,
         max_streak: 0,
+        avatar_seed: authUser?.name,
       },
     });
     if (user) {

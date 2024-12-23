@@ -14,6 +14,7 @@ model User{
   current_streak Int
   max_streak Int
   last_entry_at DateTime?
+  avatar_seed String?
   created_at DateTime
   Entries Entries[]
 
