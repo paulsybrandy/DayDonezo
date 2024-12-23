@@ -22,28 +22,6 @@ import { getUserEntries } from '@/app/actions';
 import { Entries, useUserStore } from '@/store/userStore';
 import Loader from '../Layout/loader';
 
-export const tagColors: Record<string, string> = {
-  database: 'yellow',
-  optimization: 'blue',
-  analytics: 'cyan',
-  dashboard: 'gray',
-  teamwork: 'red',
-  codereview: 'yellow',
-  darkmode: 'blue',
-  ui: 'cyan',
-  refactoring: 'gray',
-  performance: 'red',
-  learning: 'yellow',
-  websockets: 'blue',
-  bugfix: 'cyan',
-  meeting: 'gray',
-  planning: 'red',
-  css: 'red',
-  frontend: 'red',
-  coding: 'red',
-  auth: 'red',
-};
-
 export default function JournalComponent() {
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -196,13 +174,11 @@ export default function JournalComponent() {
                   <CardDescription>
                     <div className="flex flex-wrap gap-2">
                       {selectedEntry.Tags.map((tag) => {
-                        const bgColor =
-                          tagColors[tag.color] ?? `#${tagColors[tag.color]}`;
                         return (
                           <Badge
                             key={tag.id}
                             variant="default"
-                            style={{ backgroundColor: bgColor }}
+                            style={{ backgroundColor: `#${tag.color}` }}
                           >
                             <Tag className="mr-1 h-4 w-4" />
                             {tag.name}

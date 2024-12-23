@@ -251,7 +251,7 @@ export function DataTableDemo({ data }: { data: Entries[] }) {
                     >
                       <Badge
                         variant="default"
-                        style={{ backgroundColor: `#${tag}` }}
+                        style={{ backgroundColor: `#${tag.color}` }}
                         className="text-white"
                       >
                         {tag.name}
