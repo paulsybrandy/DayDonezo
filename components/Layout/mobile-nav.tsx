@@ -46,7 +46,7 @@ export default function MobileNavComponent() {
           <Link href={'/settings'}>
             <Avatar className="h-6 w-6">
               {/* <AvatarImage src={user.photoURL!} /> */}
-              <UserAvatar username={user.avatar_seed} />
+              <UserAvatar username={user.avatar_seed!} />
             </Avatar>
           </Link>
         )}
