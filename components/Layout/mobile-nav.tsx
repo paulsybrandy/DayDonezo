@@ -3,9 +3,10 @@
 import React from 'react';
 import { BookText, ChartArea, LayoutDashboard } from 'lucide-react';
 import { useUser } from '@/app/_providers/user-provider';
-import { Avatar, AvatarImage } from '../ui/avatar';
+import { Avatar } from '../ui/avatar';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import UserAvatar from '../ui/user-avatar';
 
 const menuItems = [
   {
@@ -44,7 +45,8 @@ export default function MobileNavComponent() {
         {user && (
           <Link href={'/settings'}>
             <Avatar className="h-6 w-6">
-              <AvatarImage src={user.photoURL!} />
+              {/* <AvatarImage src={user.photoURL!} /> */}
+              <UserAvatar username={user.displayName!} />
             </Avatar>
           </Link>
         )}

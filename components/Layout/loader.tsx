@@ -1,5 +1,5 @@
 import React from 'react';
-import Lottie from 'react-lottie-player';
+import Lottie from 'lottie-react';
 import rocketAnimation from '@/public/rocketAnimation.json';
 
 export default function Loader() {
@@ -8,7 +8,6 @@ export default function Loader() {
       <Lottie
         loop
         animationData={rocketAnimation}
-        play
         style={{ width: 125, height: 125 }}
       />
       <p className="text-sm text-muted-foreground">

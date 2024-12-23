@@ -2,7 +2,7 @@
 
 import { BadgeCheck, ChevronsUpDown, LogOut } from 'lucide-react';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +21,7 @@ import {
 import { User } from 'firebase/auth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/app/_providers/user-provider';
+import UserAvatar from '@/components/ui/user-avatar';
 
 export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar();
@@ -38,10 +39,11 @@ export function NavUser({ user }: { user: User }) {
               {user ? (
                 <>
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage
+                    {/* <AvatarImage
                       src={user?.photoURL ? user?.photoURL : ''}
                       alt={user.displayName!}
-                    />
+                    /> */}
+                    <UserAvatar username={user.displayName!} />
                     <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
@@ -74,10 +76,12 @@ export function NavUser({ user }: { user: User }) {
                 {user ? (
                   <>
                     <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage
+                      {/* <AvatarImage
                         src={user!.photoURL ? user.photoURL : ''}
                         alt={user.displayName!}
-                      />
+                      /> */}
+                      <UserAvatar username={user.displayName!} />
+
                       <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">

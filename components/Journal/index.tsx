@@ -36,7 +36,6 @@ export default function JournalComponent() {
 
   const fetchEntriesMutation = useMutation({
     mutationFn: async () => {
-      console.log(user?.uid);
       if (user && user.uid) {
         return await getUserEntries(user?.uid);
       }
