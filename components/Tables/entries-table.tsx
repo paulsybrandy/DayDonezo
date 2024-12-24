@@ -18,6 +18,9 @@ import {
   Check,
   ChevronDown,
   ChevronsUpDown,
+  Copy,
+  Download,
+  ExternalLink,
   MoreHorizontal,
   Share,
   Tag,
@@ -58,6 +61,180 @@ import {
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { Entries } from '@/store/userStore';
+import { useRef, useState } from 'react';
+import ImageComponent from '../Journal/Share/share-entry';
+import { Tags } from '@prisma/client';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../ui/dialog';
+import * as htmlToImage from 'html-to-image';
+import { toast } from 'sonner';
+
+const ActionCell = ({ tags }: { tags: Tags[] }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const hiddenContainerRef = useRef<HTMLDivElement | null>(null);
+  // const [imageSrc, setImageSrc] = useState<string>('');
+
+  // const generateImage = async () => {
+  //   if (hiddenContainerRef.current) {
+  //     const dataUrl = await htmlToImage.toPng(hiddenContainerRef.current, {
+  //       pixelRatio: 5,
+  //     });
+
+  //     // download image
+  //     const link = document.createElement('a');
+  //     link.download = 'html-to-img.png';
+  //     link.href = dataUrl;
+  //     // link.click();
+  //     setImageSrc(link.href);
+  //     setIsDialogOpen(true);
+  //   }
+  // };
+
+  const downloadImage = async () => {
+    if (hiddenContainerRef.current) {
+      const dataUrl = await htmlToImage.toPng(hiddenContainerRef.current, {
+        pixelRatio: 5,
+      });
+
+      // download image
+      const link = document.createElement('a');
+
+      link.download = 'image.png';
+      link.href = dataUrl;
+      link.click();
+      // setImageSrc(link.href);
+      setIsDialogOpen(false);
+    }
+  };
+
+  const share = async () => {
+    if (hiddenContainerRef.current) {
+      const dataUrl = await htmlToImage.toPng(hiddenContainerRef.current, {
+        pixelRatio: 5,
+      });
+
+      // download image
+      const link = document.createElement('a');
+      link.download = 'html-to-img.png';
+      link.href = dataUrl;
+      // link.click();
+      // setImageSrc(link.href);
+      setIsDialogOpen(true);
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'Check this out!',
+            text: 'Generated using my app.',
+            files: [
+              new File(
+                [await (await fetch(link.href)).blob()],
+                'shared-image.png',
+                { type: 'image/png' }
+              ),
+            ],
+          });
+          alert('Image shared successfully!');
+        } catch (error) {
+          console.error('Error sharing the image:', error);
+        }
+      } else {
+        alert('Sharing not supported in this browser.');
+      }
+    }
+  };
+
+  const copyImage = async () => {
+    if (hiddenContainerRef.current) {
+      try {
+        // Generate the image as a PNG Data URL
+        const dataUrl = await htmlToImage.toBlob(hiddenContainerRef.current);
+
+        // Use Clipboard API to copy the Blob
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            [dataUrl!.type]: dataUrl!,
+          }),
+        ]);
+
+        toast.success('Image copied to clipboard!');
+      } catch (error) {
+        console.error('Failed to copy image to clipboard:', error);
+        toast.error(
+          'Failed to copy image. Make sure your browser supports Clipboard API.'
+        );
+      }
+    }
+  };
+
+  return (
+    <>
+      {/* View Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Image</DialogTitle>
+          </DialogHeader>
+          <div className="flex w-full items-center justify-center">
+            <ImageComponent
+              tags={tags}
+              ref={(el) => {
+                if (el && !hiddenContainerRef.current) {
+                  hiddenContainerRef.current = el;
+                }
+              }}
+            />
+          </div>
+          <DialogFooter>
+            <div className="flex-1 space-x-2">
+              <Button onClick={share}>
+                <ExternalLink />
+              </Button>
+              <Button onClick={copyImage}>
+                <Copy />
+              </Button>
+            </div>
+
+            <Button
+              onClick={() => setIsDialogOpen(false)}
+              variant={'secondary'}
+            >
+              Close
+            </Button>
+            <Button onClick={downloadImage} variant={'default'}>
+              <Download />
+              Download
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dropdown menu for actions */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem
+            onClick={() => {
+              setIsDialogOpen(true);
+            }}
+          >
+            <Share /> Share
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  );
+};
 
 export const columns: ColumnDef<Entries>[] = [
   // {
@@ -146,23 +323,7 @@ export const columns: ColumnDef<Entries>[] = [
   {
     id: 'actions',
     enableHiding: false,
-    cell: () => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <Share /> Share
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row }) => <ActionCell tags={row.original.Tags} />,
   },
 ];
 
@@ -349,6 +510,8 @@ export function DataTableDemo({ data }: { data: Entries[] }) {
           </TableBody>
         </Table>
       </div>
+      {/* Hidden container for the image component */}
+
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{' '}
