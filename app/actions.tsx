@@ -1,19 +1,22 @@
 'use server';
 
-import { getUser } from '@/lib/auth';
+import { getUser, isUserAuth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { decryptData } from '@/lib/utils';
 import { CompletionData } from '@/store/userStore';
+import { Prisma } from '@prisma/client';
 import dayjs from 'dayjs';
 
 export async function saveUserToDb({
   uid,
   created_at,
+  name,
 }: {
   uid: string;
   created_at: string;
+  name: string;
 }) {
   try {
-    const authUser = await getUser();
     const userExists = await prisma.user.findUnique({
       where: {
         uid,
@@ -22,13 +25,14 @@ export async function saveUserToDb({
     if (userExists) {
       return true;
     }
+
     const user = await prisma.user.create({
       data: {
         uid,
         created_at: dayjs(created_at).toISOString(),
         current_streak: 0,
         max_streak: 0,
-        avatar_seed: authUser?.name,
+        avatar_seed: name,
       },
     });
     if (user) {
@@ -40,6 +44,11 @@ export async function saveUserToDb({
 }
 
 export async function getUserFromDb(uid: string) {
+  const isAuth = await isUserAuth();
+
+  if (!isAuth) {
+    throw new Error('User not authenticated');
+  }
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -53,6 +62,7 @@ export async function getUserFromDb(uid: string) {
         },
       },
     });
+
     return user;
   } catch {
     throw new Error('Error fetching user from database');
@@ -60,6 +70,11 @@ export async function getUserFromDb(uid: string) {
 }
 
 export async function getPast12MonthsCompletionData(uid: string) {
+  const isAuth = await isUserAuth();
+
+  if (!isAuth) {
+    throw new Error('User not authenticated');
+  }
   try {
     const currentDate = dayjs();
     const startDate = currentDate.subtract(12, 'month').startOf('month');
@@ -134,6 +149,12 @@ export async function getPast12MonthsCompletionData(uid: string) {
 }
 
 export async function getUserEntries(uid: string) {
+  const isAuth = await isUserAuth();
+
+  if (!isAuth) {
+    throw new Error('User not authenticated');
+  }
+
   try {
     const entries = await prisma.entries.findMany({
       where: {
@@ -143,9 +164,87 @@ export async function getUserEntries(uid: string) {
         Tags: true,
       },
     });
-    console.log(uid);
+
     return entries;
   } catch {
     throw new Error('Error fetching user entries');
   }
+}
+
+export async function saveEntryToDb(
+  data: string,
+  tags: { name: string; color: string }[]
+) {
+  const authUser = await getUser();
+
+  if (!authUser) {
+    throw new Error('User not found');
+  }
+
+  const todayISODate = dayjs().format('DD.MM.YYYY');
+
+  const alreadyExists = await prisma.entries.findFirst({
+    where: {
+      uid: authUser.uid,
+    },
+    select: {
+      created_at: true,
+    },
+    orderBy: {
+      created_at: 'desc',
+    },
+  });
+
+  if (
+    alreadyExists?.created_at &&
+    dayjs(alreadyExists?.created_at).format('DD.MM.YYYY') === todayISODate
+  ) {
+    throw new Error('Entry already exists for today');
+  }
+
+  try {
+    const entry = await prisma.entries.create({
+      data: {
+        uid: authUser.uid,
+        content: Buffer.from(data, 'utf-8'),
+        Tags: {
+          create: tags.map((tag: { name: string; color: string }) => ({
+            name: tag.name,
+            color: tag.color,
+          })),
+        },
+      },
+    });
+
+    return entry;
+  } catch {
+    throw new Error('Error saving data to database');
+  }
+}
+
+export async function getEditorContent() {
+  const authUser = await getUser();
+  if (!authUser) {
+    throw new Error('User not found');
+  }
+
+  const record = await prisma.entries.findFirst({
+    where: { uid: authUser.uid },
+  });
+
+  const columnSize = await prisma.$queryRaw<{ total_size: string }[]>(
+    Prisma.sql`SELECT pg_size_pretty(sum(octet_length("content"))) AS total_size FROM "public"."Entries"`
+  );
+
+  console.log('Column Size:', columnSize[0]?.total_size);
+
+  const decoder = new TextDecoder();
+  const contentString = decoder.decode(record?.content);
+
+  console.log('Converted Content:', contentString);
+
+  if (!record) throw new Error('Content not found!');
+  console.log(record.content.toString());
+  const decrypted = decryptData(contentString);
+  return decrypted;
 }

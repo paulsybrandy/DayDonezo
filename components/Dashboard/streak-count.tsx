@@ -11,7 +11,9 @@ import StreakCountdown from './streak-counter';
 
 export default function StreakCount() {
   const user = useUserStore((state) => state.user);
-  const latestEntryTime = dayjs(user?.last_entry_at).toISOString(); // Example: Now
+  const latestEntryTime = user?.last_entry_at
+    ? dayjs(user?.last_entry_at).toISOString()
+    : dayjs().toISOString(); // Example: Now
   const streakDuration = 24 * 60 * 60 * 1000;
   return (
     <>

@@ -20,41 +20,50 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 
 type Tag = {
-  value: string;
+  name: string;
   color: string;
 };
 
 const colors = [
-  { name: 'Red', value: '#ef4444' },
-  { name: 'Orange', value: '#f97316' },
-  { name: 'Yellow', value: '#eab308' },
-  { name: 'Green', value: '#22c55e' },
-  { name: 'Blue', value: '#3b82f6' },
-  { name: 'Indigo', value: '#6366f1' },
-  { name: 'Purple', value: '#a855f7' },
-  { name: 'Pink', value: '#ec4899' },
+  { name: 'Red', value: 'ef4444' },
+  { name: 'Orange', value: 'f97316' },
+  { name: 'Yellow', value: 'eab308' },
+  { name: 'Green', value: '22c55e' },
+  { name: 'Blue', value: '3b82f6' },
+  { name: 'Indigo', value: '6366f1' },
+  { name: 'Purple', value: 'a855f7' },
+  { name: 'Pink', value: 'ec4899' },
 ];
 
-export function TagCreator() {
+export function TagCreator({
+  setTags,
+}: {
+  setTags: React.Dispatch<React.SetStateAction<Tag[]>>;
+}) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState('');
-  const [tags, setTags] = React.useState<Tag[]>([]);
+  const [tags, setTagss] = React.useState<Tag[]>([]);
 
   const createTag = (tag: string) => {
+    if (tag.length > 25) {
+      toast.error('Tag name is too long. Max 25 characters.');
+      return;
+    }
     if (tags.length >= 5) {
       toast.error('You can only add up to 5 tags');
       return;
     }
     const random = Math.floor(Math.random() * (6 - 0) + 0);
-    if (tag && !tags.some((t) => t.value === tag)) {
-      setTags([...tags, { value: tag, color: colors[random].value }]);
+    if (tag && !tags.some((t) => t.name === tag)) {
+      setTagss([...tags, { name: tag, color: colors[random].value }]);
+      setTags([...tags, { name: tag, color: colors[random].value }]);
       setValue('');
       setOpen(false);
     }
   };
 
   const removeTag = (tag: string) => {
-    setTags(tags.filter((t) => t.value !== tag));
+    setTags(tags.filter((t) => t.name !== tag));
   };
 
   return (
@@ -126,20 +135,20 @@ export function TagCreator() {
       <div className="flex flex-wrap gap-2">
         {tags.map((tag) => (
           <Badge
-            key={tag.value}
+            key={tag.name}
             variant="outline"
             className="inline-flex items-center space-x-2 rounded-full px-3 py-1 text-sm font-semibold"
           >
             <div
               style={{
-                backgroundColor: tag.color,
+                backgroundColor: `#${tag.color}`,
                 color: getContrastColor(tag.color),
               }}
               className="h-3 w-3 rounded-full"
             ></div>
-            <span>{tag.value}</span>
+            <span>{tag.name}</span>
             <button
-              onClick={() => removeTag(tag.value)}
+              onClick={() => removeTag(tag.name)}
               className="ml-2 inline-flex items-center justify-center rounded-full bg-transparent p-1"
             >
               ×

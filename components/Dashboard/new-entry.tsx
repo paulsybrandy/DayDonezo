@@ -18,7 +18,7 @@ export default function NewEntry() {
 
   return (
     <CardFooter className="">
-      <Link href={wonToday ? '' : '/ournal/entry'} className="w-full">
+      <Link href={wonToday ? '' : '/journal/new'} className="w-full">
         <Button className="w-full" size={'lg'} disabled={!entries}>
           {!wonToday ? (
             <>

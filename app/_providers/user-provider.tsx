@@ -74,6 +74,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     onAuthStateChanged(getAuth(app), async (user) => {
       if (user) {
         setAuthUser(user);
+
         const userDetails = await getUserFromDb(user.uid);
         console.log(userDetails);
         setUser(userDetails);
@@ -95,6 +96,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       await saveUserToDb({
         uid: user.uid,
         created_at: user.metadata.creationTime?.toString() || '',
+        name: user.displayName || '',
       });
     } else {
       toast.error('No user found');
