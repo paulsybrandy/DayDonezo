@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Tooltip,
   TooltipContent,
@@ -30,7 +30,7 @@ const StreaksGrids: React.FC<StreakProps> = ({ streakData }) => {
       ) ?? false;
   });
 
-  const weeks = Math.ceil(streakData.length / 7);
+  const weeks = useMemo(() => Math.ceil(streakData.length / 7), [streakData]);
 
   return (
     <div className="w-full overflow-x-auto text-center">

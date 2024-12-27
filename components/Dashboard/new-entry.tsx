@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { CardFooter } from '../ui/card';
 import { Button } from '../ui/button';
@@ -10,10 +10,16 @@ import dayjs from 'dayjs';
 import Link from 'next/link';
 
 export default function NewEntry() {
-  const currentDate = dayjs().format('DD/MM/YYYY');
+  const currentDate = useMemo(() => dayjs().format('DD.MM.YYYY'), []);
+
   const entries = useUserStore((state) => state.user?.Entries);
-  const wonToday = entries?.some(
-    (entry) => dayjs(entry.created_at).format('DD/MM/YYYY') === currentDate
+
+  const wonToday = useMemo(
+    () =>
+      entries?.some(
+        (entry) => dayjs(entry.created_at).format('DD.MM.YYYY') === currentDate
+      ),
+    [entries, currentDate]
   );
 
   return (

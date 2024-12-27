@@ -214,9 +214,65 @@ export async function saveEntryToDb(
           })),
         },
       },
+      include: {
+        Tags: true,
+      },
     });
 
-    return entry;
+    if (entry) {
+      const userData = await prisma.user.findUnique({
+        where: {
+          uid: authUser.uid,
+        },
+        select: {
+          max_streak: true,
+          current_streak: true,
+          last_entry_at: true,
+        },
+      });
+      if (userData) {
+        const lastEntryDate = dayjs(userData.last_entry_at);
+        const diffInHours = lastEntryDate.diff(entry.created_at, 'hours');
+        console.log('difference in hours', Math.abs(diffInHours));
+
+        let user;
+        if (Math.abs(diffInHours) < 24) {
+          if (userData.current_streak + 1 > userData.max_streak) {
+            user = await prisma.user.update({
+              where: {
+                uid: authUser.uid,
+              },
+              data: {
+                current_streak: userData.current_streak + 1,
+                max_streak: userData.current_streak + 1,
+                last_entry_at: dayjs().toISOString(),
+              },
+            });
+          } else {
+            user = await prisma.user.update({
+              where: {
+                uid: authUser.uid,
+              },
+              data: {
+                current_streak: userData.current_streak + 1,
+                last_entry_at: dayjs().toISOString(),
+              },
+            });
+          }
+        } else {
+          user = await prisma.user.update({
+            where: {
+              uid: authUser.uid,
+            },
+            data: {
+              current_streak: 1,
+              last_entry_at: dayjs().toISOString(),
+            },
+          });
+        }
+        return { user, entry };
+      }
+    }
   } catch {
     throw new Error('Error saving data to database');
   }

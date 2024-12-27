@@ -9,12 +9,18 @@ import dayjs from 'dayjs';
 import { TagCreator } from './tag-creator';
 import EditorjsList from '@editorjs/list';
 import Paragraph from '@editorjs/paragraph';
-import { encryptData } from '@/lib/utils';
+import { decryptData, encryptData } from '@/lib/utils';
 import { toast } from 'sonner';
 import { saveEntryToDb } from '@/app/actions';
 import { useMutation } from '@tanstack/react-query';
+import { Entries, useUserStore } from '@/store/userStore';
 
 export default function NewJournalEntry() {
+  const setJournalEntries = useUserStore((state) => state.setJournalEntries);
+  const setUser = useUserStore((state) => state.setUser);
+  const user = useUserStore((state) => state.user);
+
+  const journalEntries = useUserStore((state) => state.journalEntries);
   const editorRef = useRef<EditorJS | null>(null);
   const [tags, setTags] = useState<{ name: string; color: string }[]>([]);
 
@@ -46,7 +52,36 @@ export default function NewJournalEntry() {
               if (tags.length < 1) {
                 toast.error('Please add at least one tag');
               } else {
-                return await saveEntryToDb(encrp, tags);
+                const data = await saveEntryToDb(encrp, tags);
+                const decoder = new TextDecoder();
+
+                if (data?.entry) {
+                  const newEntry: Entries = {
+                    id: data.entry.id,
+                    uid: data.entry.uid,
+                    content: decryptData(decoder.decode(data.entry.content)),
+                    created_at: data.entry.created_at,
+                    Tags: data.entry.Tags,
+                  };
+                  if (journalEntries && journalEntries?.length > 0) {
+                    setJournalEntries([...journalEntries, newEntry]);
+                  } else {
+                    setJournalEntries([newEntry]);
+                  }
+                }
+
+                if (data?.user && user) {
+                  user.current_streak = data.user.current_streak;
+                  user.max_streak = data.user.max_streak;
+                  user.last_entry_at = data.user.last_entry_at;
+                  user.Entries = [
+                    ...user.Entries,
+                    { created_at: data.entry.created_at },
+                  ];
+                  setUser(user);
+                }
+
+                toast.success('Entry saved successfully');
               }
             }
           })

@@ -204,7 +204,7 @@ export default function JournalComponent() {
                   ) : (
                     <>
                       <p>You didn&apos;t make it. Not a winning day!</p>
-                      {dayjs(new Date()).format('DD/MM/YYYY') ===
+                      {dayjs().format('DD/MM/YYYY') ===
                         dayjs(date).format('DD/MM/YYYY') && (
                         <Button>
                           <NotebookPen />
