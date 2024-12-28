@@ -59,7 +59,9 @@ export default function NewJournalEntry() {
                   const newEntry: Entries = {
                     id: data.entry.id,
                     uid: data.entry.uid,
-                    content: decryptData(decoder.decode(data.entry.content)),
+                    content: JSON.parse(
+                      decryptData(decoder.decode(data.entry.content))
+                    ),
                     created_at: data.entry.created_at,
                     Tags: data.entry.Tags,
                   };

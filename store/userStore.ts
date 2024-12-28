@@ -1,3 +1,4 @@
+import { OutputData } from '@editorjs/editorjs';
 import { create } from 'zustand';
 
 interface User {
@@ -13,7 +14,7 @@ interface User {
 export interface Entries {
   id: number;
   uid: string;
-  content: string;
+  content: OutputData;
   created_at: Date;
   Tags: Tags[];
 }

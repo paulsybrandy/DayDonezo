@@ -14,7 +14,7 @@ import {
 } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { cn } from '@/lib/utils';
+import { cn, decryptData } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { DataTableDemo } from '../Tables/entries-table';
 import { useMutation } from '@tanstack/react-query';
@@ -43,7 +43,7 @@ export default function JournalComponent() {
         console.log(decoder);
         const newEntries = entries.map((entry) => ({
           ...entry,
-          content: 'hello',
+          content: JSON.parse(decryptData(decoder.decode(entry.content))),
         }));
 
         return newEntries;
@@ -51,6 +51,7 @@ export default function JournalComponent() {
     },
     onSuccess: (result) => {
       setJournalEntries(result!);
+      console.log(result);
       setSelectedEntry(
         result?.find(
           (item) =>
@@ -199,8 +200,59 @@ export default function JournalComponent() {
               </CardHeader>
               <CardContent className="space-y-2">
                 {date ? (
-                  selectedEntry ? (
-                    <p>{selectedEntry.content}</p>
+                  selectedEntry && selectedEntry.content ? (
+                    (() => {
+                      const paragraphBlock = selectedEntry.content.blocks.find(
+                        (block) => block.type === 'paragraph'
+                      );
+                      const checklist = selectedEntry.content.blocks.find(
+                        (block) => block.data.style === 'checklist'
+                      );
+                      const unordered = selectedEntry.content.blocks.find(
+                        (block) => block.data.style === 'unordered'
+                      );
+                      const ordered = selectedEntry.content.blocks.find(
+                        (block) => block.data.style === 'ordered'
+                      );
+                      console.log(checklist);
+                      return (
+                        <p>
+                          {paragraphBlock
+                            ? paragraphBlock?.data.text
+                            : checklist?.data.items.length > 0
+                              ? checklist?.data.items
+                                  .slice(0, 5)
+                                  .map((item: { content: string }) => (
+                                    <>
+                                      {'✅ ' + item.content}
+                                      <br />
+                                    </>
+                                  ))
+                              : unordered?.data.items.length > 0
+                                ? unordered?.data.items
+                                    .slice(0, 5)
+                                    .map((item: { content: string }) => (
+                                      <>
+                                        {'• ' + item.content}
+                                        <br />
+                                      </>
+                                    ))
+                                : ordered?.data.items
+                                    .slice(0, 5)
+                                    .map(
+                                      (
+                                        item: { content: string },
+                                        index: number
+                                      ) => (
+                                        <>
+                                          {index + 1 + '. ' + item.content}
+                                          <br />
+                                        </>
+                                      )
+                                    )}
+                        </p>
+                      );
+                    })()
                   ) : (
                     <>
                       <p>You didn&apos;t make it. Not a winning day!</p>

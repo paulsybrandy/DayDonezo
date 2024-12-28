@@ -73,6 +73,7 @@ import {
 } from '../ui/dialog';
 import * as htmlToImage from 'html-to-image';
 import { toast } from 'sonner';
+import { OutputData } from '@editorjs/editorjs';
 
 const ActionCell = ({ tags }: { tags: Tags[] }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -291,9 +292,54 @@ export const columns: ColumnDef<Entries>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue('content')}</div>
-    ),
+    cell: ({ row }) => {
+      const content = row.getValue('content') as OutputData;
+      const paragraphBlock = content.blocks.find(
+        (block) => block.type === 'paragraph'
+      );
+      const checklist = content.blocks.find(
+        (block) => block.data.style === 'checklist'
+      );
+      const unordered = content.blocks.find(
+        (block) => block.data.style === 'unordered'
+      );
+      const ordered = content.blocks.find(
+        (block) => block.data.style === 'ordered'
+      );
+      console.log(checklist);
+      return (
+        <p>
+          {paragraphBlock
+            ? paragraphBlock?.data.text
+            : checklist?.data.items.length > 0
+              ? checklist?.data.items
+                  .slice(0, 5)
+                  .map((item: { content: string }) => (
+                    <>
+                      {'✅ ' + item.content}
+                      <br />
+                    </>
+                  ))
+              : unordered?.data.items.length > 0
+                ? unordered?.data.items
+                    .slice(0, 5)
+                    .map((item: { content: string }) => (
+                      <>
+                        {'• ' + item.content}
+                        <br />
+                      </>
+                    ))
+                : ordered?.data.items
+                    .slice(0, 5)
+                    .map((item: { content: string }, index: number) => (
+                      <>
+                        {index + 1 + '. ' + item.content}
+                        <br />
+                      </>
+                    ))}
+        </p>
+      );
+    },
   },
   {
     accessorKey: 'tags',
