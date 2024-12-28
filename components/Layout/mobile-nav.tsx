@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import UserAvatar from '../ui/user-avatar';
 import { useUserStore } from '@/store/userStore';
+import { Skeleton } from '../ui/skeleton';
 
 const menuItems = [
   {
@@ -42,13 +43,16 @@ export default function MobileNavComponent() {
             </div>
           </Link>
         ))}
-        {user && (
+        {user ? (
           <Link href={'/settings'}>
             <Avatar className="h-6 w-6">
-              {/* <AvatarImage src={user.photoURL!} /> */}
               <UserAvatar username={user.avatar_seed!} />
             </Avatar>
           </Link>
+        ) : (
+          <div>
+            <Skeleton className="h-6 w-6 rounded-full" />
+          </div>
         )}
       </div>
     </section>

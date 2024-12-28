@@ -197,7 +197,7 @@ export default function JournalComponent() {
                   </CardDescription>
                 )}
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-2">
                 {date ? (
                   selectedEntry ? (
                     <p>{selectedEntry.content}</p>

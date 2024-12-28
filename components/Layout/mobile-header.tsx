@@ -15,6 +15,8 @@ import { RainbowButton } from '../ui/rainbow-button';
 import NumberTicker from '../ui/number-ticker';
 import Link from 'next/link';
 import { isUserAuth } from '@/lib/auth';
+import FeedbackModal from '../Modal/feedback-modal';
+import { SidebarProvider } from '../ui/sidebar';
 
 export default async function MobileHeader() {
   const isAuthenticated = await isUserAuth();
@@ -44,6 +46,9 @@ export default async function MobileHeader() {
               />
               <NumberTicker value={100} className="text-white" />
             </RainbowButton>
+            <SidebarProvider>
+              <FeedbackModal />
+            </SidebarProvider>
             <Link
               href={isAuthenticated ? '/dashboard' : '/register'}
               className="w-full"

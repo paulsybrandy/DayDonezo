@@ -19,6 +19,8 @@ import {
 } from '@/components/ui/sidebar';
 import { useUser } from '@/app/_providers/user-provider';
 
+import FeedbackModal from '@/components/Modal/feedback-modal';
+
 const data = {
   navMain: [
     {
@@ -62,6 +64,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
+        <FeedbackModal />
+
         <NavUser authUser={user!} />
       </SidebarFooter>
       <SidebarRail />

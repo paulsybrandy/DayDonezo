@@ -304,3 +304,22 @@ export async function getEditorContent() {
   const decrypted = decryptData(contentString);
   return decrypted;
 }
+
+export async function saveFeedback(data: string) {
+  const authUser = await getUser();
+  if (!authUser) {
+    throw new Error('User not found');
+  }
+
+  try {
+    const feedback = await prisma.feedback.create({
+      data: {
+        uid: authUser.uid,
+        message: data,
+      },
+    });
+    return feedback;
+  } catch {
+    throw new Error('Error saving feedback to database');
+  }
+}
