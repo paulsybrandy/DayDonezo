@@ -11,10 +11,12 @@ import {
 } from '@/components/ui/card';
 import UserAvatar from '@/components/ui/user-avatar';
 import { useUserStore } from '@/store/userStore';
+import { OutputData } from '@editorjs/editorjs';
 import { Tags } from '@prisma/client';
+import dayjs from 'dayjs';
 import { Flame, Tag } from 'lucide-react';
 import { Caveat } from 'next/font/google';
-import { Ref } from 'react';
+import { Ref, useMemo } from 'react';
 
 const montserrat = Caveat({
   variable: '--font-sans',
@@ -25,13 +27,37 @@ const montserrat = Caveat({
 const ImageComponent = ({
   tags,
   ref,
+  content,
+  createdAt,
 }: {
   tags: Tags[];
   ref: Ref<HTMLDivElement>;
+  content: OutputData;
+  createdAt: string;
 }) => {
-  console.log(tags);
+  console.log(content);
   const { user: authUser } = useUser();
   const user = useUserStore((state) => state.user);
+
+  const paragraphBlock = useMemo(
+    () => content.blocks.find((block) => block.data.style === 'paragraphBlock'),
+    [content]
+  );
+
+  const checklist = useMemo(
+    () => content.blocks.find((block) => block.data.style === 'checklist'),
+    [content]
+  );
+
+  const unordered = useMemo(
+    () => content.blocks.find((block) => block.data.style === 'unordered'),
+    [content]
+  );
+
+  const ordered = useMemo(
+    () => content.blocks.find((block) => block.data.style === 'ordered'),
+    [content]
+  );
 
   return (
     <div
@@ -40,23 +66,49 @@ const ImageComponent = ({
     >
       <Card className="flex h-full w-full max-w-[325px] flex-col shadow-xl">
         <CardHeader className="items-center">
-          <CardTitle>Wins Of The Day</CardTitle>
+          <CardTitle>
+            <h2>Wins Of The Day</h2>
+            <div className="w-full text-center text-base">
+              {dayjs(createdAt).format("D MMM 'YY")}
+            </div>
+          </CardTitle>
         </CardHeader>
         <CardContent className="flex-1">
-          <div>
-            <ul className="text-xl">
-              <li>✅ Task 1</li>
-              <li>✅ Task 2</li>
-              <li>✅ Task 3</li>
-              <li>✅ Task 4</li>
-              <li>✅ Task 5</li>
-            </ul>
-            <div className="flex space-x-1">
+          <div className="text-xl">
+            {paragraphBlock
+              ? paragraphBlock?.data.text
+              : checklist?.data.items.length > 0
+                ? checklist?.data.items
+                    .slice(0, 5)
+                    .map((item: { content: string }) => (
+                      <>
+                        {'✅ ' + item.content}
+                        <br />
+                      </>
+                    ))
+                : unordered?.data.items.length > 0
+                  ? unordered?.data.items
+                      .slice(0, 5)
+                      .map((item: { content: string }) => (
+                        <>
+                          {'• ' + item.content}
+                          <br />
+                        </>
+                      ))
+                  : ordered?.data.items
+                      .slice(0, 5)
+                      .map((item: { content: string }, index: number) => (
+                        <>
+                          {index + 1 + '. ' + item.content}
+                          <br />
+                        </>
+                      ))}
+            <div className="mt-2 flex space-x-1">
               {tags.map((tag) => (
                 <div
                   key={tag.id}
                   style={{ backgroundColor: `#${tag.color}` }}
-                  className="flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold text-white transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  className="flex items-center rounded-full border px-2.5 py-0.5 text-xs text-white transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 >
                   <Tag className="mr-1 h-3 w-3" />
                   {tag.name}

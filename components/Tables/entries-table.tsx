@@ -75,7 +75,15 @@ import * as htmlToImage from 'html-to-image';
 import { toast } from 'sonner';
 import { OutputData } from '@editorjs/editorjs';
 
-const ActionCell = ({ tags }: { tags: Tags[] }) => {
+const ActionCell = ({
+  tags,
+  content,
+  createdAt,
+}: {
+  tags: Tags[];
+  content: OutputData;
+  createdAt: string;
+}) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const hiddenContainerRef = useRef<HTMLDivElement | null>(null);
@@ -154,12 +162,17 @@ const ActionCell = ({ tags }: { tags: Tags[] }) => {
     if (hiddenContainerRef.current) {
       try {
         // Generate the image as a PNG Data URL
-        const dataUrl = await htmlToImage.toBlob(hiddenContainerRef.current);
+        const dataUrl = await htmlToImage.toPng(hiddenContainerRef.current, {
+          pixelRatio: 5,
+        });
+
+        const response = await fetch(dataUrl);
+        const blob = await response.blob();
 
         // Use Clipboard API to copy the Blob
         await navigator.clipboard.write([
           new ClipboardItem({
-            [dataUrl!.type]: dataUrl!,
+            [blob.type]: blob, // Set the Blob type (e.g., 'image/png')
           }),
         ]);
 
@@ -179,7 +192,7 @@ const ActionCell = ({ tags }: { tags: Tags[] }) => {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Image</DialogTitle>
+            <DialogTitle>Entry</DialogTitle>
           </DialogHeader>
           <div className="flex w-full items-center justify-center">
             <ImageComponent
@@ -189,6 +202,8 @@ const ActionCell = ({ tags }: { tags: Tags[] }) => {
                   hiddenContainerRef.current = el;
                 }
               }}
+              content={content}
+              createdAt={createdAt}
             />
           </div>
           <DialogFooter>
@@ -306,7 +321,6 @@ export const columns: ColumnDef<Entries>[] = [
       const ordered = content.blocks.find(
         (block) => block.data.style === 'ordered'
       );
-      console.log(checklist);
       return (
         <p>
           {paragraphBlock
@@ -369,7 +383,13 @@ export const columns: ColumnDef<Entries>[] = [
   {
     id: 'actions',
     enableHiding: false,
-    cell: ({ row }) => <ActionCell tags={row.original.Tags} />,
+    cell: ({ row }) => (
+      <ActionCell
+        tags={row.original.Tags}
+        content={row.getValue('content') as OutputData}
+        createdAt={row.getValue('created_at') as string}
+      />
+    ),
   },
 ];
 
