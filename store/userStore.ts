@@ -37,6 +37,7 @@ export interface CompletionData {
 interface UserState {
   user: User | null;
   setUser: (user: User | null) => void;
+  updateAvatarSeed: (newSeed: string) => void;
   completionData: CompletionData[] | null;
   setCompletionData: (completionData: CompletionData[]) => void;
   journalEntries: Entries[] | null;
@@ -46,6 +47,10 @@ interface UserState {
 export const useUserStore = create<UserState>((set) => ({
   user: null,
   setUser: (user) => set({ user }),
+  updateAvatarSeed: (newSeed: string) =>
+    set((state) => ({
+      user: { ...state.user!, avatar_seed: newSeed },
+    })),
   completionData: null,
   setCompletionData: (completionData) => set({ completionData }),
   journalEntries: null,

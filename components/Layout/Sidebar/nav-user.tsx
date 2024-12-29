@@ -18,16 +18,16 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { User } from 'firebase/auth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/app/_providers/user-provider';
 import UserAvatar from '@/components/ui/user-avatar';
 import { useUserStore } from '@/store/userStore';
 
-export function NavUser({ authUser }: { authUser: User }) {
+export function NavUser() {
   const { isMobile } = useSidebar();
   const { signOut } = useUser();
   const user = useUserStore((state) => state.user);
+  const { user: authUser } = useUser();
 
   return (
     <SidebarMenu>
@@ -45,12 +45,15 @@ export function NavUser({ authUser }: { authUser: User }) {
                       src={user?.photoURL ? user?.photoURL : ''}
                       alt={user.displayName!}
                     /> */}
-                    <UserAvatar username={user.avatar_seed!} />
+                    <UserAvatar
+                      username={user.avatar_seed!}
+                      key={user?.avatar_seed}
+                    />
                     <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate text-xs">
-                      {authUser.displayName!}
+                      {authUser!.displayName!}
                     </span>
                     <span className="truncate text-xs">{authUser?.email}</span>
                   </div>
@@ -88,7 +91,7 @@ export function NavUser({ authUser }: { authUser: User }) {
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate text-xs">
-                        {authUser.displayName!}
+                        {authUser!.displayName!}
                       </span>
                       <span className="truncate text-xs">
                         {authUser?.email}

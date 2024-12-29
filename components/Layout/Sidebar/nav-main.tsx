@@ -1,7 +1,5 @@
 'use client';
 
-import { type LucideIcon } from 'lucide-react';
-
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -11,25 +9,50 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string;
-    url: string;
-    icon?: LucideIcon;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
-  }[];
-}) {
+import {
+  BookText,
+  ChartNoAxesCombined,
+  ChartPie,
+  LayoutDashboard,
+  Settings2,
+} from 'lucide-react';
+
+const items = {
+  navMain: [
+    {
+      title: 'Dashboard',
+      url: '/dashboard',
+      icon: LayoutDashboard,
+    },
+    {
+      title: 'Analytics',
+      url: '/analytics',
+      icon: ChartPie,
+    },
+    {
+      title: 'Journal',
+      url: '/journal',
+      icon: BookText,
+    },
+    {
+      title: 'Leaderboard',
+      url: '/leaderboard',
+      icon: ChartNoAxesCombined,
+    },
+    {
+      title: 'Settings',
+      url: '/settings',
+      icon: Settings2,
+    },
+  ],
+};
+
+export function NavMain() {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Navigation</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
+        {items.navMain.map((item) => (
           <SidebarMenuItem key={item.title}>
             <Link href={item.url}>
               <SidebarMenuButton tooltip={item.title}>

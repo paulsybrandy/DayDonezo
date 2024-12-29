@@ -323,3 +323,25 @@ export async function saveFeedback(data: string) {
     throw new Error('Error saving feedback to database');
   }
 }
+
+export async function updateUserAvatarSeed(avatarSeed: string) {
+  const authUser = await getUser();
+  if (!authUser) {
+    throw new Error('User not found');
+  }
+
+  try {
+    const user = await prisma.user.update({
+      where: {
+        uid: authUser.uid,
+      },
+      data: {
+        avatar_seed: avatarSeed,
+      },
+    });
+
+    return user;
+  } catch {
+    throw new Error('Error updating user details');
+  }
+}

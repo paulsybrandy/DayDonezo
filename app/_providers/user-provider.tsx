@@ -13,6 +13,7 @@ import {
   onAuthStateChanged,
   getAuth,
   UserCredential,
+  updateProfile,
 } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
@@ -26,6 +27,7 @@ interface UserContextType {
   loading: boolean;
   signOut: () => void;
   login: () => void;
+  updateUserDetails: (data: { email: string; username: string }) => void;
   saveUser: (user: UserCredential['user']) => void;
 }
 
@@ -103,11 +105,36 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     }
   };
 
+  const updateUserDetails = async (data: {
+    email: string;
+    username: string;
+  }) => {
+    // const authEmail = user?.email;
+    const authName = user?.displayName;
+
+    // if (authEmail !== data.email) {
+    //   await updateEmail(getAuth(app).currentUser!, data.email).then(() => {
+    //     setAuthUser((state) => ({ ...state!, email: data.email }));
+    //     toast.success('Email updated successfully');
+    //   });
+    // }
+
+    if (authName !== data.username) {
+      await updateProfile(getAuth(app).currentUser!, {
+        displayName: data.username,
+      }).then(() => {
+        setAuthUser((state) => ({ ...state!, displayName: data.username }));
+        toast.success('Username updated successfully');
+      });
+    }
+  };
+
   const value: UserContextType = {
     user,
     signOut,
     login,
     saveUser,
+    updateUserDetails,
     loading: logoutMutation.isPending,
   };
 
