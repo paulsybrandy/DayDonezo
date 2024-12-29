@@ -54,9 +54,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
             }
           }
         });
-      } else {
-        toast.error('No user found');
-        await fetch('/api/logout');
       }
     },
     [setAuthUser, setUser]
@@ -89,9 +86,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
             router.refresh();
           }
         }
-      } else {
-        toast.error('No user found');
-        await fetch('/api/logout');
       }
     });
   };
