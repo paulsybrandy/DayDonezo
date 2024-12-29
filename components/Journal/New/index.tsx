@@ -30,9 +30,8 @@ export default function NewJournalEntry() {
         editorRef.current
           .save()
           .then(async (outputData) => {
-            console.log(outputData);
             const encrp = encryptData(JSON.stringify(outputData));
-            console.log(encrp);
+
             let text = '';
             outputData.blocks.forEach((block) => {
               if (block.type === 'paragraph') {
