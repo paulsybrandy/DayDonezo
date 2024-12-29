@@ -6,25 +6,58 @@ import EditorJS, { BlockToolConstructable } from '@editorjs/editorjs';
 import { useEffect, useRef, useState } from 'react';
 import Title from 'title-editorjs';
 import dayjs from 'dayjs';
-import { TagCreator } from './tag-creator';
+import { TagCreator } from '../New/tag-creator';
 import EditorjsList from '@editorjs/list';
 import Paragraph from '@editorjs/paragraph';
 import { decryptData, encryptData } from '@/lib/utils';
 import { toast } from 'sonner';
-import { saveEntryToDb } from '@/app/actions';
+import { getEntryFromId, updateEntryDetails } from '@/app/actions';
 import { useMutation } from '@tanstack/react-query';
 import { Entries, useUserStore } from '@/store/userStore';
+import { useParams } from 'next/navigation';
+import Loader from '@/components/Layout/loader';
 
-export default function NewJournalEntry() {
+export default function EditJournalEntry() {
+  const params = useParams<{ id: string }>();
+
   const setJournalEntries = useUserStore((state) => state.setJournalEntries);
-  const setUser = useUserStore((state) => state.setUser);
-  const user = useUserStore((state) => state.user);
 
   const journalEntries = useUserStore((state) => state.journalEntries);
-  const editorRef = useRef<EditorJS | null>(null);
-  const [tags, setTags] = useState<{ name: string; color: string }[]>([]);
 
-  const saveEntryMutation = useMutation({
+  const editorRef = useRef<EditorJS | null>(null);
+  const [entry, setEntry] = useState<Entries | null>(
+    journalEntries?.find((entry) => entry.id === +params.id) ?? null
+  );
+
+  const [tags, setTags] = useState<{ name: string; color: string }[]>(
+    journalEntries?.find((entry) => entry.id === +params.id)?.Tags ?? []
+  );
+
+  const fetchEntryMutation = useMutation({
+    mutationFn: async () => {
+      const res = await getEntryFromId(+params.id);
+      if (res?.success) {
+        if (res.entry) {
+          const decoder = new TextDecoder();
+
+          const newEntry = {
+            ...res.entry,
+            content: JSON.parse(
+              decryptData(decoder.decode(res.entry?.content))
+            ),
+          };
+
+          setEntry(newEntry);
+          setTags(newEntry.Tags);
+          console.log(entry);
+        }
+      } else {
+        toast.error(res?.message);
+      }
+    },
+  });
+
+  const updateEntryMutation = useMutation({
     mutationFn: async () => {
       if (editorRef.current)
         editorRef.current
@@ -52,7 +85,16 @@ export default function NewJournalEntry() {
               if (tags.length < 1) {
                 toast.error('Please add at least one tag');
               } else {
-                const data = await saveEntryToDb(encrp, tags);
+                const newTags = tags.filter((tag) =>
+                  entry?.Tags.some((t) => t.name !== tag.name)
+                );
+                console.log(newTags);
+
+                const data = await updateEntryDetails(
+                  encrp,
+                  newTags,
+                  +params.id
+                );
                 if (data?.success) {
                   const decoder = new TextDecoder();
 
@@ -73,18 +115,7 @@ export default function NewJournalEntry() {
                     }
                   }
 
-                  if (data?.user && user) {
-                    user.current_streak = data.user.current_streak;
-                    user.max_streak = data.user.max_streak;
-                    user.last_entry_at = data.user.last_entry_at;
-                    user.Entries = [
-                      ...user.Entries,
-                      { created_at: data.entry.created_at },
-                    ];
-                    setUser(user);
-                  }
-
-                  toast.success('Entry saved successfully');
+                  toast.success('Entry updated successfully');
                 } else {
                   toast.error(data?.message);
                 }
@@ -100,8 +131,12 @@ export default function NewJournalEntry() {
     },
   });
 
+  const fetchEntryMutationRef = useRef(fetchEntryMutation);
+
   useEffect(() => {
-    if (!editorRef.current) {
+    fetchEntryMutationRef.current = fetchEntryMutation;
+
+    if (entry && !editorRef.current) {
       editorRef.current = new EditorJS({
         holder: 'editor',
         tools: {
@@ -117,8 +152,11 @@ export default function NewJournalEntry() {
             },
           },
         },
+        data: entry.content,
         placeholder: 'Finished chapter 3 of...',
       });
+    } else if (!entry) {
+      fetchEntryMutationRef.current.mutate();
     }
 
     return () => {
@@ -127,39 +165,44 @@ export default function NewJournalEntry() {
         editorRef.current = null;
       }
     };
-  }, []);
+  }, [entry]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await saveEntryMutation.mutate();
+    await updateEntryMutation.mutate();
   };
 
-  return (
-    <section className="w-full place-content-center justify-items-center p-4 py-3 lg:px-16">
-      <Card className="w-full max-w-3xl flex-1">
-        <CardHeader>
-          <CardTitle>
-            <span>{dayjs().format('MMMM DD, YYYY • h:mm a')}</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <p>
-              Add tags <span>(Max 5)</span>
-            </p>
-            <TagCreator setTags={setTags} tags={[]} />
-            <p>
-              Write your accomplishments <span>(Max 750 chars)</span>
-            </p>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div id="editor" className="rounded-md border p-2"></div>
-              <Button type="submit" className="">
-                Save
-              </Button>
-            </form>
-          </div>
-        </CardContent>
-      </Card>
-    </section>
-  );
+  if (!entry && fetchEntryMutation.isPending) {
+    return <Loader />;
+  }
+
+  if (entry)
+    return (
+      <section className="w-full place-content-center justify-items-center p-4 py-3 lg:px-16">
+        <Card className="w-full max-w-3xl flex-1">
+          <CardHeader>
+            <CardTitle>
+              <span>{dayjs().format('MMMM DD, YYYY • h:mm a')}</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <p>
+                Add tags <span>(Max 5)</span>
+              </p>
+              <TagCreator setTags={setTags} tags={tags} />
+              <p>
+                Write your accomplishments <span>(Max 750 chars)</span>
+              </p>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div id="editor" className="rounded-md border p-2"></div>
+                <Button type="submit" className="">
+                  Save
+                </Button>
+              </form>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+    );
 }

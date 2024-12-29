@@ -12,7 +12,7 @@ export default function Loader() {
         playsInline
         style={{ width: '150px', height: '150px' }}
       >
-        <source src="loader.webm" type="video/webm" />
+        <source src="/loader.webm" type="video/webm" />
       </video>
 
       <p className="text-sm text-muted-foreground">

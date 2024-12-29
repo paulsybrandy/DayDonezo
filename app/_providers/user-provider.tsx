@@ -92,7 +92,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   const signOut = async () => {
     await logoutMutation.mutate();
-    setAuthUser(null);
   };
 
   const saveUser = async (user: UserCredential['user']) => {

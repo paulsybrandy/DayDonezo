@@ -43,11 +43,10 @@ export async function saveUserToDb({
 }
 
 export async function getUserFromDb(uid: string) {
-  const isAuth = await isUserAuth();
-
-  if (!isAuth) {
-    return { success: false, message: 'User not authenticated' };
+  if (!uid) {
+    return { success: false, message: 'User not found' };
   }
+
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -61,7 +60,6 @@ export async function getUserFromDb(uid: string) {
         },
       },
     });
-
     return { success: true, user };
   } catch {
     return { success: false, message: 'Error fetching user from database' };
@@ -338,5 +336,77 @@ export async function updateUserAvatarSeed(avatarSeed: string) {
     return { success: true, user };
   } catch {
     return { success: false, message: 'Error updating user details' };
+  }
+}
+
+export async function updateEntryDetails(
+  data: string,
+  tags: { name: string; color: string }[] | null | undefined,
+  id: number
+) {
+  const authUser = await getUser();
+  if (!authUser) {
+    return { success: false, message: 'User not authenticated' };
+  }
+  try {
+    const entry = await prisma.entries.update({
+      where: {
+        id,
+        uid: authUser.uid,
+      },
+      data: {
+        content: Buffer.from(data, 'utf-8'),
+        ...(tags && tags.length > 0
+          ? {
+              Tags: {
+                create: tags.map((tag: { name: string; color: string }) => ({
+                  name: tag.name,
+                  color: tag.color,
+                })),
+                deleteMany: {
+                  entry_id: id,
+                  name: {
+                    notIn: tags.map((tag: { name: string }) => tag.name), // Delete tags that are not in the new list of tags
+                  },
+                },
+              },
+            }
+          : {}),
+      },
+      include: {
+        Tags: true,
+      },
+    });
+
+    if (entry) {
+      return { success: true, entry };
+    }
+  } catch {
+    return { success: false, message: 'Error updating entry details' };
+  }
+}
+
+export async function getEntryFromId(id: number) {
+  const authUser = await getUser();
+  if (!authUser) {
+    return { success: false, message: 'User not authenticated' };
+  }
+
+  try {
+    const entry = await prisma.entries.findUnique({
+      where: {
+        id,
+        uid: authUser.uid,
+      },
+      include: {
+        Tags: true,
+      },
+    });
+
+    if (entry) {
+      return { success: true, entry };
+    }
+  } catch {
+    return { success: false, message: 'Error fetching entry' };
   }
 }

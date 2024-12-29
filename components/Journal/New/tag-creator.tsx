@@ -37,26 +37,28 @@ const colors = [
 
 export function TagCreator({
   setTags,
+  tags,
 }: {
   setTags: React.Dispatch<React.SetStateAction<Tag[]>>;
+  tags: Tag[];
 }) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState('');
-  const [tags, setTagss] = React.useState<Tag[]>([]);
+  const [newTags, setNewTags] = React.useState<Tag[]>(tags ?? []);
 
   const createTag = (tag: string) => {
-    if (tag.length > 25) {
+    if (newTags.length > 25) {
       toast.error('Tag name is too long. Max 25 characters.');
       return;
     }
-    if (tags.length >= 5) {
+    if (newTags.length >= 5) {
       toast.error('You can only add up to 5 tags');
       return;
     }
     const random = Math.floor(Math.random() * (6 - 0) + 0);
-    if (tag && !tags.some((t) => t.name === tag)) {
-      setTagss([...tags, { name: tag, color: colors[random].value }]);
-      setTags([...tags, { name: tag, color: colors[random].value }]);
+    if (newTags && !newTags.some((t) => t.name === tag)) {
+      setNewTags([...tags, { name: tag, color: colors[random].value }]);
+      setTags([...newTags, { name: tag, color: colors[random].value }]);
       setValue('');
       setOpen(false);
     }
@@ -64,6 +66,7 @@ export function TagCreator({
 
   const removeTag = (tag: string) => {
     setTags(tags.filter((t) => t.name !== tag));
+    setNewTags(newTags.filter((t) => t.name !== tag));
   };
 
   return (
@@ -133,7 +136,7 @@ export function TagCreator({
         </PopoverContent>
       </Popover>
       <div className="flex flex-wrap gap-2">
-        {tags.map((tag) => (
+        {newTags.map((tag) => (
           <Badge
             key={tag.name}
             variant="outline"

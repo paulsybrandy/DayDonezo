@@ -20,6 +20,7 @@ import {
   ChevronsUpDown,
   Copy,
   Download,
+  Edit,
   ExternalLink,
   MoreHorizontal,
   Share,
@@ -74,6 +75,7 @@ import {
 import * as htmlToImage from 'html-to-image';
 import { toast } from 'sonner';
 import { OutputData } from '@editorjs/editorjs';
+import Link from 'next/link';
 
 const ActionCell = ({
   tags,
@@ -231,23 +233,13 @@ const ActionCell = ({
       </Dialog>
 
       {/* Dropdown menu for actions */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <MoreHorizontal />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            onClick={() => {
-              setIsDialogOpen(true);
-            }}
-          >
-            <Share /> Share
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <DropdownMenuItem
+        onClick={() => {
+          setIsDialogOpen(true);
+        }}
+      >
+        <Share /> Share
+      </DropdownMenuItem>
     </>
   );
 };
@@ -384,11 +376,26 @@ export const columns: ColumnDef<Entries>[] = [
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => (
-      <ActionCell
-        tags={row.original.Tags}
-        content={row.getValue('content') as OutputData}
-        createdAt={row.getValue('created_at') as string}
-      />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <Link href={`/journal/edit/${row.original.id}`}>
+            <DropdownMenuItem>
+              <Edit /> Edit
+            </DropdownMenuItem>
+          </Link>
+          <ActionCell
+            tags={row.original.Tags}
+            content={row.getValue('content') as OutputData}
+            createdAt={row.getValue('created_at') as string}
+          />
+        </DropdownMenuContent>
+      </DropdownMenu>
     ),
   },
 ];
