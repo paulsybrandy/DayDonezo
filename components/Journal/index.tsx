@@ -38,9 +38,8 @@ export default function JournalComponent() {
     mutationFn: async () => {
       if (user && user.uid) {
         const entries = await getUserEntries(user?.uid);
-        console.log(entries);
         const decoder = new TextDecoder();
-        console.log(decoder);
+
         const newEntries = entries.map((entry) => ({
           ...entry,
           content: JSON.parse(decryptData(decoder.decode(entry.content))),
@@ -51,7 +50,6 @@ export default function JournalComponent() {
     },
     onSuccess: (result) => {
       setJournalEntries(result!);
-      console.log(result);
       setSelectedEntry(
         result?.find(
           (item) =>
@@ -214,7 +212,6 @@ export default function JournalComponent() {
                       const ordered = selectedEntry.content.blocks.find(
                         (block) => block.data.style === 'ordered'
                       );
-                      console.log(checklist);
                       return (
                         <p>
                           {paragraphBlock

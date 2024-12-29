@@ -53,37 +53,41 @@ export default function NewJournalEntry() {
                 toast.error('Please add at least one tag');
               } else {
                 const data = await saveEntryToDb(encrp, tags);
-                const decoder = new TextDecoder();
+                if (data?.success) {
+                  const decoder = new TextDecoder();
 
-                if (data?.entry) {
-                  const newEntry: Entries = {
-                    id: data.entry.id,
-                    uid: data.entry.uid,
-                    content: JSON.parse(
-                      decryptData(decoder.decode(data.entry.content))
-                    ),
-                    created_at: data.entry.created_at,
-                    Tags: data.entry.Tags,
-                  };
-                  if (journalEntries && journalEntries?.length > 0) {
-                    setJournalEntries([...journalEntries, newEntry]);
-                  } else {
-                    setJournalEntries([newEntry]);
+                  if (data?.entry) {
+                    const newEntry: Entries = {
+                      id: data.entry.id,
+                      uid: data.entry.uid,
+                      content: JSON.parse(
+                        decryptData(decoder.decode(data.entry.content))
+                      ),
+                      created_at: data.entry.created_at,
+                      Tags: data.entry.Tags,
+                    };
+                    if (journalEntries && journalEntries?.length > 0) {
+                      setJournalEntries([...journalEntries, newEntry]);
+                    } else {
+                      setJournalEntries([newEntry]);
+                    }
                   }
-                }
 
-                if (data?.user && user) {
-                  user.current_streak = data.user.current_streak;
-                  user.max_streak = data.user.max_streak;
-                  user.last_entry_at = data.user.last_entry_at;
-                  user.Entries = [
-                    ...user.Entries,
-                    { created_at: data.entry.created_at },
-                  ];
-                  setUser(user);
-                }
+                  if (data?.user && user) {
+                    user.current_streak = data.user.current_streak;
+                    user.max_streak = data.user.max_streak;
+                    user.last_entry_at = data.user.last_entry_at;
+                    user.Entries = [
+                      ...user.Entries,
+                      { created_at: data.entry.created_at },
+                    ];
+                    setUser(user);
+                  }
 
-                toast.success('Entry saved successfully');
+                  toast.success('Entry saved successfully');
+                } else {
+                  toast.error(data?.message);
+                }
               }
             }
           })
@@ -91,12 +95,8 @@ export default function NewJournalEntry() {
             toast.error(error.message);
           });
     },
-    onSuccess: (result) => {
-      console.log(result);
-    },
     onError: (error) => {
       toast.error(error.message);
-      console.log(error);
     },
   });
 

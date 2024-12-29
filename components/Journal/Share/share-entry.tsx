@@ -35,7 +35,6 @@ const ImageComponent = ({
   content: OutputData;
   createdAt: string;
 }) => {
-  console.log(content);
   const { user: authUser } = useUser();
   const user = useUserStore((state) => state.user);
 

@@ -47,8 +47,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     async (user: User | null) => {
       if (user) {
         setAuthUser(user);
-        const userDetails = await getUserFromDb(user.uid);
-        setUser(userDetails);
+        await getUserFromDb(user.uid).then((res) => {
+          setUser(res);
+        });
       } else {
         toast.error('No user found');
         await fetch('/api/logout');
@@ -78,7 +79,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         setAuthUser(user);
 
         const userDetails = await getUserFromDb(user.uid);
-        console.log(userDetails);
         setUser(userDetails);
         router.refresh();
       } else {

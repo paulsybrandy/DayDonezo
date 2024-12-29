@@ -1,17 +1,20 @@
 'use client';
 
 import React from 'react';
-import Lottie from 'lottie-react';
-import rocketAnimation from '@/public/rocketAnimation.json';
 
 export default function Loader() {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center">
-      <Lottie
+      <video
+        autoPlay={true}
         loop
-        animationData={rocketAnimation}
-        style={{ width: 125, height: 125 }}
-      />
+        muted
+        playsInline
+        style={{ width: '150px', height: '150px' }}
+      >
+        <source src="load.webm" type="video/webm" />
+      </video>
+
       <p className="text-sm text-muted-foreground">
         Hang tight! Loading data...
       </p>

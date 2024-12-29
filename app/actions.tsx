@@ -4,7 +4,6 @@ import { getUser, isUserAuth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { decryptData } from '@/lib/utils';
 import { CompletionData } from '@/store/userStore';
-import { Prisma } from '@prisma/client';
 import dayjs from 'dayjs';
 
 export async function saveUserToDb({
@@ -178,7 +177,7 @@ export async function saveEntryToDb(
   const authUser = await getUser();
 
   if (!authUser) {
-    throw new Error('User not found');
+    return { success: false, message: 'User not found' };
   }
 
   const todayISODate = dayjs().format('DD.MM.YYYY');
@@ -199,7 +198,7 @@ export async function saveEntryToDb(
     alreadyExists?.created_at &&
     dayjs(alreadyExists?.created_at).format('DD.MM.YYYY') === todayISODate
   ) {
-    throw new Error('Entry already exists for today');
+    return { success: false, message: 'Entry already exists for today' };
   }
 
   try {
@@ -231,9 +230,10 @@ export async function saveEntryToDb(
         },
       });
       if (userData) {
-        const lastEntryDate = dayjs(userData.last_entry_at);
+        const lastEntryDate = userData.last_entry_at
+          ? dayjs(userData.last_entry_at)
+          : dayjs();
         const diffInHours = lastEntryDate.diff(entry.created_at, 'hours');
-        console.log('difference in hours', Math.abs(diffInHours));
 
         let user;
         if (Math.abs(diffInHours) < 24) {
@@ -270,11 +270,11 @@ export async function saveEntryToDb(
             },
           });
         }
-        return { user, entry };
+        return { success: true, user, entry };
       }
     }
   } catch {
-    throw new Error('Error saving data to database');
+    return { success: false, message: 'Error saving data to database' };
   }
 }
 
@@ -288,19 +288,11 @@ export async function getEditorContent() {
     where: { uid: authUser.uid },
   });
 
-  const columnSize = await prisma.$queryRaw<{ total_size: string }[]>(
-    Prisma.sql`SELECT pg_size_pretty(sum(octet_length("content"))) AS total_size FROM "public"."Entries"`
-  );
-
-  console.log('Column Size:', columnSize[0]?.total_size);
-
   const decoder = new TextDecoder();
   const contentString = decoder.decode(record?.content);
 
-  console.log('Converted Content:', contentString);
-
   if (!record) throw new Error('Content not found!');
-  console.log(record.content.toString());
+
   const decrypted = decryptData(contentString);
   return decrypted;
 }

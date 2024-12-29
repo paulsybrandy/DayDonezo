@@ -36,7 +36,6 @@ export function FeedbackForm({
   });
 
   const onSubmit = async (values: z.infer<typeof suggestionFormSchema>) => {
-    console.log('clicked');
     if (!(values.message.toString().trim().length > 0)) {
       toast.error('Message is empty!');
       return;
