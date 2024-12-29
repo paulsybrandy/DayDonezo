@@ -36,9 +36,7 @@ export default function MobileNavComponent() {
             <div>
               <item.icon
                 size={24}
-                className={
-                  location === item.url ? 'fill-primary stroke-primary-600' : ''
-                }
+                className={location === item.url ? 'stroke-primary' : 'block'}
               />
             </div>
           </Link>
