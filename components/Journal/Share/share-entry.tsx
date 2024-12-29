@@ -73,26 +73,26 @@ const ImageComponent = ({
           </CardTitle>
         </CardHeader>
         <CardContent className="flex-1">
-          <div className="text-xl">
+          <div className="text-xl" key={content.time}>
             {paragraphBlock
               ? paragraphBlock?.data.text
               : checklist?.data.items.length > 0
                 ? checklist?.data.items
                     .slice(0, 5)
-                    .map((item: { content: string }) => (
-                      <>
+                    .map((item: { content: string }, index: number) => (
+                      <div key={index}>
                         {'✅ ' + item.content}
                         <br />
-                      </>
+                      </div>
                     ))
                 : unordered?.data.items.length > 0
                   ? unordered?.data.items
                       .slice(0, 5)
-                      .map((item: { content: string }) => (
-                        <>
+                      .map((item: { content: string }, index: number) => (
+                        <div key={index}>
                           {'• ' + item.content}
                           <br />
-                        </>
+                        </div>
                       ))
                   : ordered?.data.items
                       .slice(0, 5)
@@ -103,16 +103,17 @@ const ImageComponent = ({
                         </>
                       ))}
             <div className="mt-2 flex space-x-1">
-              {tags.map((tag) => (
-                <div
-                  key={tag.id}
-                  style={{ backgroundColor: `#${tag.color}` }}
-                  className="flex items-center rounded-full border px-2.5 py-0.5 text-xs text-white transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                >
-                  <Tag className="mr-1 h-3 w-3" />
-                  {tag.name}
-                </div>
-              ))}
+              {tags &&
+                tags.map((tag) => (
+                  <div
+                    key={tag.id}
+                    style={{ backgroundColor: `#${tag.color}` }}
+                    className="flex items-center rounded-full border px-2.5 py-0.5 text-xs text-white transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  >
+                    <Tag className="mr-1 h-3 w-3" />
+                    {tag.name}
+                  </div>
+                ))}
             </div>
           </div>
         </CardContent>

@@ -4,6 +4,7 @@ import * as React from 'react';
 import {
   ColumnDef,
   ColumnFiltersState,
+  Row,
   SortingState,
   VisibilityState,
   flexRender,
@@ -64,10 +65,10 @@ import { cn } from '@/lib/utils';
 import { Entries } from '@/store/userStore';
 import { useRef, useState } from 'react';
 import ImageComponent from '../Journal/Share/share-entry';
-import { Tags } from '@prisma/client';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -77,15 +78,7 @@ import { toast } from 'sonner';
 import { OutputData } from '@editorjs/editorjs';
 import Link from 'next/link';
 
-const ActionCell = ({
-  tags,
-  content,
-  createdAt,
-}: {
-  tags: Tags[];
-  content: OutputData;
-  createdAt: string;
-}) => {
+const ActionCell = ({ row }: { row: Row<Entries> }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const hiddenContainerRef = useRef<HTMLDivElement | null>(null);
@@ -187,27 +180,29 @@ const ActionCell = ({
       }
     }
   };
-
+  console.log(isDialogOpen);
   return (
     <>
-      {/* View Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        {/* View Dialog */}
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Entry</DialogTitle>
           </DialogHeader>
-          <div className="flex w-full items-center justify-center">
-            <ImageComponent
-              tags={tags}
-              ref={(el) => {
-                if (el && !hiddenContainerRef.current) {
-                  hiddenContainerRef.current = el;
-                }
-              }}
-              content={content}
-              createdAt={createdAt}
-            />
-          </div>
+          <DialogDescription>
+            <div className="flex w-full items-center justify-center">
+              <ImageComponent
+                tags={row.original.Tags}
+                ref={(el) => {
+                  if (el && !hiddenContainerRef.current) {
+                    hiddenContainerRef.current = el;
+                  }
+                }}
+                content={row.original.content}
+                createdAt={row.original.created_at.toISOString()}
+              />
+            </div>
+          </DialogDescription>
           <DialogFooter>
             <div className="flex-1 space-x-2">
               <Button onClick={share}>
@@ -233,13 +228,28 @@ const ActionCell = ({
       </Dialog>
 
       {/* Dropdown menu for actions */}
-      <DropdownMenuItem
-        onClick={() => {
-          setIsDialogOpen(true);
-        }}
-      >
-        <Share /> Share
-      </DropdownMenuItem>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <Link href={`/journal/edit/${row.original.id}`}>
+            <DropdownMenuItem>
+              <Edit /> Edit
+            </DropdownMenuItem>
+          </Link>
+          <DropdownMenuItem
+            onClick={() => {
+              setIsDialogOpen(true);
+            }}
+          >
+            <Share /> Share
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </>
   );
 };
@@ -375,28 +385,7 @@ export const columns: ColumnDef<Entries>[] = [
   {
     id: 'actions',
     enableHiding: false,
-    cell: ({ row }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <MoreHorizontal />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <Link href={`/journal/edit/${row.original.id}`}>
-            <DropdownMenuItem>
-              <Edit /> Edit
-            </DropdownMenuItem>
-          </Link>
-          <ActionCell
-            tags={row.original.Tags}
-            content={row.getValue('content') as OutputData}
-            createdAt={row.getValue('created_at') as string}
-          />
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
+    cell: ({ row }) => <ActionCell row={row} />,
   },
 ];
 
