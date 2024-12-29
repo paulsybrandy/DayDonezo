@@ -46,9 +46,11 @@ export default async function MobileHeader() {
               />
               <NumberTicker value={100} className="text-white" />
             </RainbowButton>
-            <SidebarProvider>
-              <FeedbackModal />
-            </SidebarProvider>
+            {isAuthenticated && (
+              <SidebarProvider>
+                <FeedbackModal />
+              </SidebarProvider>
+            )}
             <Link
               href={isAuthenticated ? '/dashboard' : '/register'}
               className="w-full"
