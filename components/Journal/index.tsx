@@ -21,6 +21,7 @@ import { useMutation } from '@tanstack/react-query';
 import { getUserEntries } from '@/app/actions';
 import { Entries, useUserStore } from '@/store/userStore';
 import Loader from '../Layout/loader';
+import Link from 'next/link';
 
 export default function JournalComponent() {
   const [open, setOpen] = React.useState(false);
@@ -259,10 +260,12 @@ export default function JournalComponent() {
                       <p>You didn&apos;t make it. Not a winning day!</p>
                       {dayjs().format('DD/MM/YYYY') ===
                         dayjs(date).format('DD/MM/YYYY') && (
-                        <Button>
-                          <NotebookPen />
-                          Jot Your Victories
-                        </Button>
+                        <Link href="/journal/new">
+                          <Button>
+                            <NotebookPen />
+                            Jot Your Victories
+                          </Button>
+                        </Link>
                       )}
                     </>
                   )

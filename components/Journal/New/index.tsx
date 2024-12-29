@@ -30,8 +30,9 @@ export default function NewJournalEntry() {
         editorRef.current
           .save()
           .then(async (outputData) => {
+            console.log(outputData);
             const encrp = encryptData(JSON.stringify(outputData));
-
+            console.log(encrp);
             let text = '';
             outputData.blocks.forEach((block) => {
               if (block.type === 'paragraph') {
@@ -44,8 +45,8 @@ export default function NewJournalEntry() {
                 text += block.data.text;
               }
             });
-            if (text.length > 1000) {
-              toast.error('Entry is too long. Max 1000 characters');
+            if (text.length > 750) {
+              toast.error('Entry is too long. Max 750 characters');
             } else if (text.toString().trim().length === 0) {
               toast.error('Please write something');
             } else {
@@ -148,7 +149,9 @@ export default function NewJournalEntry() {
               Add tags <span>(Max 5)</span>
             </p>
             <TagCreator setTags={setTags} />
-            <p>Write your accomplishments...</p>
+            <p>
+              Write your accomplishments <span>(Max 750 chars)</span>
+            </p>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div id="editor" className="rounded-md border p-2"></div>
               <Button type="submit" className="">
