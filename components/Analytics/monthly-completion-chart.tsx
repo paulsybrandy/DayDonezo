@@ -1,6 +1,6 @@
 'use client';
 
-import { CompletionData, useUserStore } from '@/store/userStore';
+import { useUserStore } from '@/store/userStore';
 import React, { useRef } from 'react';
 
 import {
@@ -40,13 +40,17 @@ export default function MonthlyCompletionChart() {
   const getCompletionDataMutation = useMutation({
     mutationFn: async () => {
       return await getPast12MonthsCompletionData(user?.uid ?? '').then(
-        (result: CompletionData[]) => {
-          return result;
+        (result) => {
+          if (result.success) {
+            return result.result;
+          }
         }
       );
     },
     onSuccess: (result) => {
-      setCompletionData(result);
+      if (result) {
+        setCompletionData(result);
+      }
     },
   });
 

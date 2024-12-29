@@ -48,7 +48,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       if (user) {
         setAuthUser(user);
         await getUserFromDb(user.uid).then((res) => {
-          setUser(res);
+          if (res.success) {
+            if (res.user) {
+              setUser(res.user);
+            }
+          }
         });
       } else {
         toast.error('No user found');
@@ -79,8 +83,12 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         setAuthUser(user);
 
         const userDetails = await getUserFromDb(user.uid);
-        setUser(userDetails);
-        router.refresh();
+        if (userDetails.success) {
+          if (userDetails.user) {
+            setUser(userDetails.user);
+            router.refresh();
+          }
+        }
       } else {
         toast.error('No user found');
         await fetch('/api/logout');

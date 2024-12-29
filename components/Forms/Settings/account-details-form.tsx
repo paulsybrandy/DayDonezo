@@ -52,9 +52,13 @@ export default function AccountDetailsForm() {
         });
         if (values.avatarSeed !== userStore?.avatar_seed) {
           updateUserAvatarSeed(values.avatarSeed)
-            .then(() => {
-              updateAvatarSeed(values.avatarSeed);
-              toast.success('Avatar seed updated successfully');
+            .then((res) => {
+              if (res.success) {
+                updateAvatarSeed(values.avatarSeed);
+                toast.success('Avatar seed updated successfully');
+              } else {
+                toast.error(res.message);
+              }
             })
             .catch((error) => {
               toast.error('Failed to update avatar seed: ', error.message);

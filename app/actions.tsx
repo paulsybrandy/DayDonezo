@@ -35,10 +35,10 @@ export async function saveUserToDb({
       },
     });
     if (user) {
-      return true;
+      return { success: true };
     }
   } catch {
-    throw new Error('Error saving user to database');
+    return { success: false, message: 'Error saving user to database' };
   }
 }
 
@@ -46,7 +46,7 @@ export async function getUserFromDb(uid: string) {
   const isAuth = await isUserAuth();
 
   if (!isAuth) {
-    throw new Error('User not authenticated');
+    return { success: false, message: 'User not authenticated' };
   }
   try {
     const user = await prisma.user.findUnique({
@@ -62,9 +62,9 @@ export async function getUserFromDb(uid: string) {
       },
     });
 
-    return user;
+    return { success: true, user };
   } catch {
-    throw new Error('Error fetching user from database');
+    return { success: false, message: 'Error fetching user from database' };
   }
 }
 
@@ -72,7 +72,7 @@ export async function getPast12MonthsCompletionData(uid: string) {
   const isAuth = await isUserAuth();
 
   if (!isAuth) {
-    throw new Error('User not authenticated');
+    return { success: false, message: 'User not authenticated' };
   }
   try {
     const currentDate = dayjs();
@@ -141,9 +141,12 @@ export async function getPast12MonthsCompletionData(uid: string) {
       };
     });
 
-    return result as CompletionData[];
+    return { success: true, result: result as CompletionData[] };
   } catch {
-    throw new Error('Error fetching past 12 months completion data');
+    return {
+      success: false,
+      message: 'Error fetching past 12 months completion data',
+    };
   }
 }
 
@@ -151,7 +154,7 @@ export async function getUserEntries(uid: string) {
   const isAuth = await isUserAuth();
 
   if (!isAuth) {
-    throw new Error('User not authenticated');
+    return { success: false, message: 'User not authenticated' };
   }
 
   try {
@@ -164,9 +167,9 @@ export async function getUserEntries(uid: string) {
       },
     });
 
-    return entries;
+    return { success: true, entries };
   } catch {
-    throw new Error('Error fetching user entries');
+    return { success: true, message: 'Error fetching user entries' };
   }
 }
 
@@ -281,7 +284,7 @@ export async function saveEntryToDb(
 export async function getEditorContent() {
   const authUser = await getUser();
   if (!authUser) {
-    throw new Error('User not found');
+    return { success: false, message: 'User not authenticated' };
   }
 
   const record = await prisma.entries.findFirst({
@@ -291,16 +294,16 @@ export async function getEditorContent() {
   const decoder = new TextDecoder();
   const contentString = decoder.decode(record?.content);
 
-  if (!record) throw new Error('Content not found!');
+  if (!record) return { success: false, message: 'Content not found!' };
 
   const decrypted = decryptData(contentString);
-  return decrypted;
+  return { success: true, decrypted };
 }
 
 export async function saveFeedback(data: string) {
   const authUser = await getUser();
   if (!authUser) {
-    throw new Error('User not found');
+    return { success: false, message: 'User not authenticated' };
   }
 
   try {
@@ -310,16 +313,16 @@ export async function saveFeedback(data: string) {
         message: data,
       },
     });
-    return feedback;
+    return { success: true, feedback };
   } catch {
-    throw new Error('Error saving feedback to database');
+    return { success: false, message: 'Error saving feedback to database' };
   }
 }
 
 export async function updateUserAvatarSeed(avatarSeed: string) {
   const authUser = await getUser();
   if (!authUser) {
-    throw new Error('User not found');
+    return { success: false, message: 'User not authenticated' };
   }
 
   try {
@@ -332,8 +335,8 @@ export async function updateUserAvatarSeed(avatarSeed: string) {
       },
     });
 
-    return user;
+    return { success: true, user };
   } catch {
-    throw new Error('Error updating user details');
+    return { success: false, message: 'Error updating user details' };
   }
 }

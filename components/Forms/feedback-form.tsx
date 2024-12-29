@@ -51,8 +51,10 @@ export function FeedbackForm({
     mutationFn: async (values: z.infer<typeof suggestionFormSchema>) => {
       await saveFeedback(values.message)
         .then((res) => {
-          if (res) {
+          if (res.success) {
             toast.success('Feedback submitted successfully');
+          } else {
+            toast.error(res.message);
           }
         })
         .catch((error) => {

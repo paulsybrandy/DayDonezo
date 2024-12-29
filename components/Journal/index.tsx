@@ -37,15 +37,19 @@ export default function JournalComponent() {
   const fetchEntriesMutation = useMutation({
     mutationFn: async () => {
       if (user && user.uid) {
-        const entries = await getUserEntries(user?.uid);
-        const decoder = new TextDecoder();
+        const res = await getUserEntries(user?.uid);
+        if (res.success) {
+          if (res.entries) {
+            const decoder = new TextDecoder();
 
-        const newEntries = entries.map((entry) => ({
-          ...entry,
-          content: JSON.parse(decryptData(decoder.decode(entry.content))),
-        }));
+            const newEntries = res.entries.map((entry) => ({
+              ...entry,
+              content: JSON.parse(decryptData(decoder.decode(entry.content))),
+            }));
 
-        return newEntries;
+            return newEntries;
+          }
+        }
       }
     },
     onSuccess: (result) => {
