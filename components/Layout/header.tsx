@@ -19,14 +19,20 @@ export default async function Header() {
           <span className="text-xl font-bold">{Const.APP_NAME}</span>
         </Link>
         <div className="hidden items-center gap-2 lg:flex">
-          <RainbowButton className="group h-10 space-x-1 rounded-md">
-            <span>Star on Github</span>
-            <Star
-              className="duration-250 fill-gray-400 stroke-gray-400 transition-colors group-hover:fill-yellow-500 group-hover:stroke-yellow-500"
-              size={20}
-            />
-            <NumberTicker value={100} className="text-white" />
-          </RainbowButton>
+          <Link
+            href="https://github.com/Jaimin25/DayDonezo"
+            className="group h-10 space-x-1 rounded-md"
+            target="_blank"
+          >
+            <RainbowButton className="space-x-1">
+              <span>Star on Github</span>
+              <Star
+                className="duration-250 fill-gray-400 stroke-gray-400 transition-colors group-hover:fill-yellow-500 group-hover:stroke-yellow-500"
+                size={20}
+              />
+              <NumberTicker value={100} className="text-white" />
+            </RainbowButton>
+          </Link>
           <Link href={isAuthenticated ? '/dashboard' : '/register'}>
             <Button variant={'default'} className="items-center text-center">
               {isAuthenticated ? (

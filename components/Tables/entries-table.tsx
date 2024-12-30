@@ -180,7 +180,6 @@ const ActionCell = ({ row }: { row: Row<Entries> }) => {
       }
     }
   };
-  console.log(isDialogOpen);
   return (
     <>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

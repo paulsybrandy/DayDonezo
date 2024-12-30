@@ -49,7 +49,6 @@ export default function EditJournalEntry() {
 
           setEntry(newEntry);
           setTags(newEntry.Tags);
-          console.log(entry);
         }
       } else {
         toast.error(res?.message);
