@@ -85,39 +85,7 @@ export default function EditJournalEntry() {
               if (tags.length < 1) {
                 toast.error('Please add at least one tag');
               } else {
-                let newTags;
-                console.log(entry?.Tags, tags);
-                if (entry?.Tags) {
-                  if (entry.Tags.length > 0) {
-                    // Filter only tags that do not exist in entry.Tags
-                    if (tags.length > entry.Tags.length) {
-                      newTags = tags.filter(
-                        (tag) =>
-                          !entry.Tags.some(
-                            (existingTag) => existingTag.name === tag.name
-                          )
-                      );
-                    } else {
-                      newTags = entry.Tags.filter((existingTag) =>
-                        tags.some((tag) => tag.name === existingTag.name)
-                      );
-                    }
-                  } else {
-                    // If entry.Tags is empty, all tags are new
-                    newTags = tags;
-                  }
-                } else {
-                  // If entry.Tags is undefined, all tags are new
-                  newTags = tags;
-                }
-
-                console.log(newTags);
-
-                const data = await updateEntryDetails(
-                  encrp,
-                  newTags,
-                  +params.id
-                );
+                const data = await updateEntryDetails(encrp, tags, +params.id);
                 if (data?.success) {
                   const decoder = new TextDecoder();
 
