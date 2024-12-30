@@ -22,7 +22,6 @@ import {
   Copy,
   Download,
   Edit,
-  ExternalLink,
   MoreHorizontal,
   Share,
   Tag,
@@ -109,7 +108,8 @@ const ActionCell = ({ row }: { row: Row<Entries> }) => {
       // download image
       const link = document.createElement('a');
 
-      link.download = 'image.png';
+      link.download =
+        'Entry-' + dayjs(row.original.created_at).format('DD/MM/YYYY') + '.png';
       link.href = dataUrl;
       link.click();
       // setImageSrc(link.href);
@@ -117,41 +117,41 @@ const ActionCell = ({ row }: { row: Row<Entries> }) => {
     }
   };
 
-  const share = async () => {
-    if (hiddenContainerRef.current) {
-      const dataUrl = await htmlToImage.toPng(hiddenContainerRef.current, {
-        pixelRatio: 5,
-      });
+  // const share = async () => {
+  //   if (hiddenContainerRef.current) {
+  //     const dataUrl = await htmlToImage.toPng(hiddenContainerRef.current, {
+  //       pixelRatio: 5,
+  //     });
 
-      // download image
-      const link = document.createElement('a');
-      link.download = 'html-to-img.png';
-      link.href = dataUrl;
-      // link.click();
-      // setImageSrc(link.href);
-      setIsDialogOpen(true);
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: 'Check this out!',
-            text: 'Generated using my app.',
-            files: [
-              new File(
-                [await (await fetch(link.href)).blob()],
-                'shared-image.png',
-                { type: 'image/png' }
-              ),
-            ],
-          });
-          alert('Image shared successfully!');
-        } catch (error) {
-          console.error('Error sharing the image:', error);
-        }
-      } else {
-        alert('Sharing not supported in this browser.');
-      }
-    }
-  };
+  //     // download image
+  //     const link = document.createElement('a');
+  //     link.download = 'html-to-img.png';
+  //     link.href = dataUrl;
+  //     // link.click();
+  //     // setImageSrc(link.href);
+  //     setIsDialogOpen(true);
+  //     if (navigator.share) {
+  //       try {
+  //         await navigator.share({
+  //           title: 'Check this out!',
+  //           text: 'Generated using my app.',
+  //           files: [
+  //             new File(
+  //               [await (await fetch(link.href)).blob()],
+  //               'shared-image.png',
+  //               { type: 'image/png' }
+  //             ),
+  //           ],
+  //         });
+  //         alert('Image shared successfully!');
+  //       } catch (error) {
+  //         console.error('Error sharing the image:', error);
+  //       }
+  //     } else {
+  //       alert('Sharing not supported in this browser.');
+  //     }
+  //   }
+  // };
 
   const copyImage = async () => {
     if (hiddenContainerRef.current) {
@@ -203,26 +203,28 @@ const ActionCell = ({ row }: { row: Row<Entries> }) => {
               />
             </div>
           </DialogDescription>
-          <DialogFooter>
+          <DialogFooter className="flex flex-row">
             <div className="flex-1 space-x-2">
-              <Button onClick={share}>
+              {/* <Button onClick={share}>
                 <ExternalLink />
-              </Button>
+              </Button> */}
               <Button onClick={copyImage}>
                 <Copy />
               </Button>
             </div>
 
-            <Button
-              onClick={() => setIsDialogOpen(false)}
-              variant={'secondary'}
-            >
-              Close
-            </Button>
-            <Button onClick={downloadImage} variant={'default'}>
-              <Download />
-              Download
-            </Button>
+            <div className="space-x-2">
+              <Button
+                onClick={() => setIsDialogOpen(false)}
+                variant={'secondary'}
+              >
+                Close
+              </Button>
+              <Button onClick={downloadImage} variant={'default'}>
+                <Download />
+                Download
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
