@@ -85,9 +85,32 @@ export default function EditJournalEntry() {
               if (tags.length < 1) {
                 toast.error('Please add at least one tag');
               } else {
-                const newTags = tags.filter((tag) =>
-                  entry?.Tags.some((t) => t.name !== tag.name)
-                );
+                let newTags;
+                console.log(entry?.Tags, tags);
+                if (entry?.Tags) {
+                  if (entry.Tags.length > 0) {
+                    // Filter only tags that do not exist in entry.Tags
+                    if (tags.length > entry.Tags.length) {
+                      newTags = tags.filter(
+                        (tag) =>
+                          !entry.Tags.some(
+                            (existingTag) => existingTag.name === tag.name
+                          )
+                      );
+                    } else {
+                      newTags = entry.Tags.filter((existingTag) =>
+                        tags.some((tag) => tag.name === existingTag.name)
+                      );
+                    }
+                  } else {
+                    // If entry.Tags is empty, all tags are new
+                    newTags = tags;
+                  }
+                } else {
+                  // If entry.Tags is undefined, all tags are new
+                  newTags = tags;
+                }
+
                 console.log(newTags);
 
                 const data = await updateEntryDetails(
@@ -109,7 +132,11 @@ export default function EditJournalEntry() {
                       Tags: data.entry.Tags,
                     };
                     if (journalEntries && journalEntries?.length > 0) {
-                      setJournalEntries([...journalEntries, newEntry]);
+                      setJournalEntries(
+                        journalEntries.map((entry) =>
+                          entry.id === newEntry.id ? newEntry : entry
+                        )
+                      );
                     } else {
                       setJournalEntries([newEntry]);
                     }

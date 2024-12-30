@@ -359,16 +359,16 @@ export async function updateEntryDetails(
         ...(tags && tags.length > 0
           ? {
               Tags: {
+                // deleteMany: {
+                //   entry_id: id,
+                //   name: {
+                //     notIn: tags.map((tag: { name: string }) => tag.name),
+                //   },
+                // },
                 create: tags.map((tag: { name: string; color: string }) => ({
                   name: tag.name,
                   color: tag.color,
                 })),
-                deleteMany: {
-                  entry_id: id,
-                  name: {
-                    notIn: tags.map((tag: { name: string }) => tag.name), // Delete tags that are not in the new list of tags
-                  },
-                },
               },
             }
           : {}),
