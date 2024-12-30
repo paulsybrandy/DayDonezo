@@ -35,7 +35,7 @@ const faqList = [
   {
     title: 'How do I track my streaks?',
     description:
-      'DayDonezo automatically tracks your daily entries. If you log a journal entry for consecutive days, the app will display a &quot;streak&quot; count to keep you motivated.',
+      'DayDonezo automatically tracks your daily entries. If you log a journal entry for consecutive days, the app will display a streak count to keep you motivated.',
   },
   {
     title: 'How can I view my past entries?',

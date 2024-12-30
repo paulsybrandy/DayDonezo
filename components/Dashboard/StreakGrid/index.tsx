@@ -1,35 +1,37 @@
-'use client';
-
 import React, { useMemo } from 'react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { useUserStore } from '@/store/userStore';
 import dayjs from 'dayjs';
+import {
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/tooltip'; // Replace with your actual imports
 
-interface StreakDay {
+// Mock types
+interface Day {
   date: string;
   active: boolean;
 }
 
 interface StreakProps {
-  streakData: StreakDay[];
+  streakData: Day[];
 }
 
+// Utility to generate random streak data
+const generateRandomStreakData = (daysCount: number): Day[] => {
+  const today = dayjs();
+  return Array.from({ length: daysCount })
+    .map((_, i) => {
+      const date = today.subtract(i, 'day').toISOString();
+      return {
+        date,
+        active: Math.random() < 0.5, // 50% chance for a day to be active
+      };
+    })
+    .reverse(); // Reverse to keep dates in ascending order
+};
+
 const StreaksGrids: React.FC<StreakProps> = ({ streakData }) => {
-  const entries = useUserStore((state) => state.user?.Entries);
-
-  streakData.forEach((day) => {
-    const dayFormatted = dayjs(day.date).format('DD/MM/YYYY');
-    day.active =
-      entries?.some(
-        (entry) => dayjs(entry.created_at).format('DD/MM/YYYY') === dayFormatted
-      ) ?? false;
-  });
-
   const weeks = useMemo(() => Math.ceil(streakData.length / 7), [streakData]);
 
   return (
@@ -73,4 +75,15 @@ const StreaksGrids: React.FC<StreakProps> = ({ streakData }) => {
   );
 };
 
-export default StreaksGrids;
+// Usage example
+const App: React.FC = () => {
+  const randomStreakData = generateRandomStreakData(365); // Generate 30 days of random streaks
+
+  return (
+    <div className="App flex w-full items-center justify-center">
+      <StreaksGrids streakData={randomStreakData} />
+    </div>
+  );
+};
+
+export default App;

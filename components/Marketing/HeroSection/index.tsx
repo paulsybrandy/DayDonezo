@@ -69,13 +69,13 @@ export default async function HeroSection() {
       <BlurFade
         delay={1.05}
         blur="0px"
-        className="relative mt-10 text-balance text-center text-xl text-gray-500 md:px-16 lg:px-32"
+        className="relative mt-10 text-balance text-center text-xl text-primary md:px-16 lg:px-32"
       >
         <HeroVideoDialog
-          className="block dark:hidden"
+          className="block rounded-md border shadow-primary-foreground dark:hidden"
           animationStyle="from-center"
-          videoSrc="https://www.youtube.com/embed/qh3NGpYRG3I?si=4rb-zSdDkVK9qxxb"
-          thumbnailSrc="https://startup-template-sage.vercel.app/hero-light.png"
+          videoSrc=""
+          thumbnailSrc="/dashboard1.png"
           thumbnailAlt="Hero Video"
         />
       </BlurFade>

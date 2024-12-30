@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { saveEntryToDb } from '@/app/actions';
 import { useMutation } from '@tanstack/react-query';
 import { Entries, useUserStore } from '@/store/userStore';
+import confetti from 'canvas-confetti';
 
 export default function NewJournalEntry() {
   const setJournalEntries = useUserStore((state) => state.setJournalEntries);
@@ -23,6 +24,35 @@ export default function NewJournalEntry() {
   const journalEntries = useUserStore((state) => state.journalEntries);
   const editorRef = useRef<EditorJS | null>(null);
   const [tags, setTags] = useState<{ name: string; color: string }[]>([]);
+
+  const handleClick = () => {
+    const duration = 5 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+    const randomInRange = (min: number, max: number) =>
+      Math.random() * (max - min) + min;
+
+    const interval = window.setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+      });
+    }, 250);
+  };
 
   const saveEntryMutation = useMutation({
     mutationFn: async () => {
@@ -85,6 +115,7 @@ export default function NewJournalEntry() {
                   }
 
                   toast.success('Entry saved successfully');
+                  handleClick();
                 } else {
                   toast.error(data?.message);
                 }
