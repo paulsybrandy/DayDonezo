@@ -57,7 +57,7 @@ export function TagCreator({
     }
     const random = Math.floor(Math.random() * (6 - 0) + 0);
     if (newTags && !newTags.some((t) => t.name === tag)) {
-      setNewTags([...tags, { name: tag, color: colors[random].value }]);
+      setNewTags([...newTags, { name: tag, color: colors[random].value }]);
       setTags([...newTags, { name: tag, color: colors[random].value }]);
       setValue('');
       setOpen(false);
@@ -65,7 +65,7 @@ export function TagCreator({
   };
 
   const removeTag = (tag: string) => {
-    setTags(tags.filter((t) => t.name !== tag));
+    setTags(newTags.filter((t) => t.name !== tag));
     setNewTags(newTags.filter((t) => t.name !== tag));
   };
 
