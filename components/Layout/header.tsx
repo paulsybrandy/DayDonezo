@@ -12,8 +12,8 @@ export default async function Header() {
   const isAuthenticated = await isUserAuth();
 
   return (
-    <header className="header sticky top-0 z-50 h-14 border-b border-gray-200 bg-background/60 px-4 py-2 backdrop-blur sm:px-16 lg:px-32">
-      <div className="mx-auto flex h-full w-full max-w-[1400px] items-center justify-between">
+    <header className="header sticky top-0 z-50 h-14 border-b border-gray-200 bg-background/60 px-4 py-2 backdrop-blur sm:px-12">
+      <div className="mx-auto flex h-full w-full max-w-[1920px] items-center justify-between">
         <Link className="flex items-center" href="/">
           <BookCheck className="rotate-6 stroke-primary" size={32} />
           <span className="text-xl font-bold">{Const.APP_NAME}</span>

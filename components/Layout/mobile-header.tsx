@@ -52,7 +52,7 @@ export default async function MobileHeader() {
             </a>
             <Link
               href="https://github.com/Jaimin25/DayDonezo"
-              className="group h-10 space-x-1 rounded-md"
+              className="group h-10 w-full space-x-1 rounded-md"
               target="_blank"
             >
               <RainbowButton className="group space-x-1">
