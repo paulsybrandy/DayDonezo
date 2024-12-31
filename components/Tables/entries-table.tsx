@@ -428,7 +428,7 @@ export function DataTableDemo({ data }: { data: Entries[] }) {
       <div className="flex flex-col justify-between gap-2 py-4 *:w-full md:flex-row">
         {/* SEARCH FILTER */}
         <Input
-          placeholder="Filter emails..."
+          placeholder="Filter content..."
           value={(table.getColumn('content')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('content')?.setFilterValue(event.target.value)

@@ -38,6 +38,18 @@ export default async function MobileHeader() {
           </DrawerHeader>
           <DrawerFooter>
             {/* <Button variant={"outline"}>Login</Button> */}
+            <a
+              href="https://www.producthunt.com/posts/daydonezo?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-daydonezo"
+              target="_blank"
+              className="w-full text-center"
+            >
+              <img
+                src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=745904&theme=light"
+                alt="DayDonezo - Journaling&#0032;Wins&#0044;&#0032;Designing&#0032;Life | Product Hunt"
+                width="250"
+                height="54"
+              />
+            </a>
             <RainbowButton className="group space-x-1">
               <span>Star on Github</span>
               <Star

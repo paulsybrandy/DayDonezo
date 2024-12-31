@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DayDonezo - Journaling Wins, Designing Life
 
-## Getting Started
+<b>DayDonezo</b> is a digital journaling platform where you can document your daily wins and accomplishments. It’s designed to help you reflect, stay motivated, and create a positive habit of recognizing your achievements.
 
-First, run the development server:
+## 🚀 Features
+
+- <b>Streak Tracking:</b> Keep track of your journaling streaks to maintain momentum.
+- <b>Leaderboard:</b> Engage in friendly competition with others and rank up based on your streaks and activities.
+- <b>Custom Avatar Generation:</b> Stand out with a unique avatar generated just for you.
+- <b>Shareable Wins:</b> Share your daily wins with beautifully generated photos.
+- <b>Encrypted Entries:</b> Your journal content is safe and private with encryption.
+- 📊 <b>Analytics:</b> Gain insights into your journaling habits with intuitive analytics.
+
+## 🛠️ Tech Stack
+
+1. Next.js
+1. ShadCN, MagicUI, Aceternity
+1. Prisma
+1. PostgreSQL
+1. Firebase
+
+## 📈 Future Features
+
+- [ ] Notifications
+- [ ] Photo Customization
+- [ ] Mobile App
+- [ ] Leaderboard
+
+## 🛠️ Contribution
+
+#### 1. Fork the repository to your GitHub account.
+
+#### 2. Clone the forked repository to your local machine.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Jaimin25/DayDonezo.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### 3. Create a new branch for your changes.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+git checkout -b feature/your-feature
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+#### 4. Make your changes, whether they're bug fixes, new features, or improvements.
 
-## Learn More
+#### 5. add the change in your branch
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+git add .
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+#### 6. Commit your changes with descriptive commit messages.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+git commit -m "Add your descriptive commit message here"
+git push origin feature/your-feature
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+#### 7. Open a Pull Request (PR) against the main repository.
