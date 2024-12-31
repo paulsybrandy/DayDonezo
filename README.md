@@ -3,10 +3,9 @@
 <b>DayDonezo</b> is a digital journaling platform where you can document your daily wins and accomplishments. It’s designed to help you reflect, stay motivated, and create a positive habit of recognizing your achievements.
 
 <div align="center">
-<video width="600" controls>
-  <source src="public/demo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+
+https://github.com/user-attachments/assets/d9e3ef59-c018-4c1a-a75a-bc91f7311297
+
 </div>
 
 ## 🚀 Features
