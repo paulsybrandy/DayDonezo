@@ -50,14 +50,20 @@ export default async function MobileHeader() {
                 height="54"
               />
             </a>
-            <RainbowButton className="group space-x-1">
-              <span>Star on Github</span>
-              <Star
-                className="duration-250 fill-gray-400 stroke-gray-400 transition-colors group-hover:fill-yellow-500 group-hover:stroke-yellow-500"
-                size={20}
-              />
-              <NumberTicker value={100} className="text-white" />
-            </RainbowButton>
+            <Link
+              href="https://github.com/Jaimin25/DayDonezo"
+              className="group h-10 space-x-1 rounded-md"
+              target="_blank"
+            >
+              <RainbowButton className="group space-x-1">
+                <span>Star on Github</span>
+                <Star
+                  className="duration-250 fill-gray-400 stroke-gray-400 transition-colors group-hover:fill-yellow-500 group-hover:stroke-yellow-500"
+                  size={20}
+                />
+                <NumberTicker value={100} className="text-white" />
+              </RainbowButton>
+            </Link>
             {isAuthenticated && (
               <SidebarProvider>
                 <FeedbackModal />
