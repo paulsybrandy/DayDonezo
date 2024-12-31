@@ -7,6 +7,7 @@ import Footer from '@/components/Layout/footer';
 import { Toaster } from 'sonner';
 import Providers from '../_providers/provider';
 import { cookies } from 'next/headers';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 const rubik = Rubik({
   variable: '--font-sans',
@@ -43,6 +44,7 @@ export default async function RootLayout({
       <body
         className={`${parsedFont === 'montserrat' ? montserrat.variable : rubik.variable} min-h-svh bg-background font-sans antialiased`}
       >
+        <GoogleAnalytics gaId={process.env.GOOGLE_TAG!} />
         <main className="flex h-screen min-h-svh flex-col overflow-y-auto">
           <Providers>
             <Header />
