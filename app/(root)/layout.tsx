@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   openGraph: {
     images: [
       {
-        url: `https://raw.githubusercontent.com/Jaimin25/DayDonezo/85c1b1559feb6d08d95b71b82e998c87143f87ca/public/Link%20Preview%20-%20DayDonezo.png`,
+        url: `https://raw.githubusercontent.com/Jaimin25/DayDonezo/7e87aeb92b5633fc6e833ec40296849dfcd6fbce/public/Link%20Preview%20-%20DayDonezo.png`,
         width: 1200,
         height: 630,
         alt: 'DayDonezo',
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     description: Const.APP_DESCRIPTION,
     images: [
       {
-        url: 'https://raw.githubusercontent.com/Jaimin25/DayDonezo/85c1b1559feb6d08d95b71b82e998c87143f87ca/public/Link%20Preview%20-%20DayDonezo.png',
+        url: 'https://raw.githubusercontent.com/Jaimin25/DayDonezo/7e87aeb92b5633fc6e833ec40296849dfcd6fbce/public/Link%20Preview%20-%20DayDonezo.png',
         width: 1200,
         height: 630,
         alt: 'DayDonezo',
