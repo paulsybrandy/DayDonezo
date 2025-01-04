@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   openGraph: {
     images: [
       {
-        url: `https://github-production-user-asset-6210df.s3.amazonaws.com/65119631/400134050-5126b529-6803-4afe-adda-8737a6fd20d4.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250104%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250104T105228Z&X-Amz-Expires=300&X-Amz-Signature=835e53192f2be6b2ecc4320abeaa24e045fea707c991353aa4f292ab0b3c7cb5&X-Amz-SignedHeaders=host`,
+        url: `https://raw.githubusercontent.com/Jaimin25/DayDonezo/85c1b1559feb6d08d95b71b82e998c87143f87ca/public/Link%20Preview%20-%20DayDonezo.png`,
         width: 1200,
         height: 630,
         alt: 'DayDonezo',
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     description: Const.APP_DESCRIPTION,
     images: [
       {
-        url: 'https://github-production-user-asset-6210df.s3.amazonaws.com/65119631/400134050-5126b529-6803-4afe-adda-8737a6fd20d4.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250104%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250104T105228Z&X-Amz-Expires=300&X-Amz-Signature=835e53192f2be6b2ecc4320abeaa24e045fea707c991353aa4f292ab0b3c7cb5&X-Amz-SignedHeaders=host',
+        url: 'https://raw.githubusercontent.com/Jaimin25/DayDonezo/85c1b1559feb6d08d95b71b82e998c87143f87ca/public/Link%20Preview%20-%20DayDonezo.png',
         width: 1200,
         height: 630,
         alt: 'DayDonezo',
