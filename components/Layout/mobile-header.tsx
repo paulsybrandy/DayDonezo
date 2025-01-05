@@ -38,7 +38,7 @@ export default async function MobileHeader() {
           </DrawerHeader>
           <DrawerFooter>
             {/* <Button variant={"outline"}>Login</Button> */}
-            <a
+            {/* <a
               href="https://www.producthunt.com/posts/daydonezo?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-daydonezo"
               target="_blank"
               className="w-full text-center"
@@ -49,7 +49,7 @@ export default async function MobileHeader() {
                 width="250"
                 height="54"
               />
-            </a>
+            </a> */}
             <Link
               href="https://github.com/Jaimin25/DayDonezo"
               className="group h-10 w-full space-x-1 rounded-md"

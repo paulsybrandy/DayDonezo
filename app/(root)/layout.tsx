@@ -27,6 +27,32 @@ export const metadata: Metadata = {
   icons: {
     icon: [{ url: 'public/icon.png', sizes: '32x32' }],
   },
+  metadataBase: new URL(Const.APP_URL),
+  openGraph: {
+    images: [
+      {
+        url: `https://raw.githubusercontent.com/Jaimin25/DayDonezo/7e87aeb92b5633fc6e833ec40296849dfcd6fbce/public/Link%20Preview%20-%20DayDonezo.png`,
+        width: 1200,
+        height: 630,
+        alt: 'DayDonezo',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@jaimin_chovatia',
+    creator: '@jaimin_chovatia',
+    title: Const.APP_NAME + ' - Journaling Wins, Designing Life',
+    description: Const.APP_DESCRIPTION,
+    images: [
+      {
+        url: 'https://raw.githubusercontent.com/Jaimin25/DayDonezo/7e87aeb92b5633fc6e833ec40296849dfcd6fbce/public/Link%20Preview%20-%20DayDonezo.png',
+        width: 1200,
+        height: 630,
+        alt: 'DayDonezo',
+      },
+    ],
+  },
 };
 
 export default async function RootLayout({

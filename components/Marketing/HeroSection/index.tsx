@@ -20,7 +20,7 @@ export default async function HeroSection() {
           blur="0px"
           className="relative z-10 mx-auto max-w-xl text-balance text-center text-xl text-gray-500"
         >
-          <a
+          {/* <a
             href="https://www.producthunt.com/posts/daydonezo?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-daydonezo"
             target="_blank"
           >
@@ -30,14 +30,14 @@ export default async function HeroSection() {
               width="250"
               height="54"
             />
-          </a>
-          {/* <Button
+          </a> */}
+          <Button
             variant={'outline'}
             className="z hover:text-none h-8 rounded-full px-4 text-sm font-normal shadow-sm"
           >
             <span>🧪</span> <hr className="h-full w-full border" />
-            <span>We&apos;re live!</span>
-          </Button> */}
+            <span>Currently in beta</span>
+          </Button>
         </BlurFade>
       </div>
       <div className="mt-8">
